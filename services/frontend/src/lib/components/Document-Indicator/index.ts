@@ -1,0 +1,1 @@
+export { default as DocumentIndicator } from "./component.svelte";

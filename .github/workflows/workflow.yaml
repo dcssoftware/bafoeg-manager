@@ -1,0 +1,236 @@
+name: CI Pipeline
+on:
+  push:
+  workflow_dispatch: 
+    inputs:
+      release-software:
+        description: 'Trigger a release software snapshot tag workflow'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  runner:
+    name: Check Licenses
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Git user
+        run: |
+          git config user.name "DCS.io Bot"
+          git config user.email "${{ secrets.GH_BOT_EMAIL }}"
+
+      - name: create .env file
+        run: |
+          echo "APP_DATABASE_USERNAME=postgres" >> .env
+          echo "APP_DATABASE_PASSWORD=postgres" >> .env
+          echo "APP_DATABASE_DATABASE=postgres" >> .env
+
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Static Code Analysis
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      - name: Run Filename Linter (ls-lint)
+        uses: ls-lint/action@v2
+
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Install Dependencies
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libwebp-dev libwebp-dev libvips-dev  libvips-tools libvips-doc libpoppler-dev libpopplerkit-dev
+
+      - name: NPM | Install NodeJS
+        uses: actions/setup-node@v6
+        with:
+          node-version: 25.8.2
+          cache: 'npm'
+          cache-dependency-path: services/frontend/package-lock.json
+
+      - name: Install Golang
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.26.1
+          cache-dependency-path: services/backend/go.sum
+
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Install Dependencies Frontend
+        run: (cd services/frontend ; npm install)
+
+      - name: Install Dependencies Backend
+        run: (cd services/backend ; go mod download)
+      
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Check Licenses
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      - name: NPM | Install License Checker
+        run: npm install -g license-checker
+
+      - name: NPM | Run License Check
+        run: make license-check-fe
+
+      - name: Golang | Install License Checker
+        run: go install github.com/google/go-licenses@latest
+
+      - name: Golang | Run License Check
+        run: make license-check-be
+
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Run Tests
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      - name: Golang | Run Backend Tests
+        run: make test-be-ci
+        env:
+          APP_DATABASE_ADDR: "postgres"
+          APP_DATABASE_PORT: 5432
+          APP_DATABASE_SSL: 0
+          APP_DATABASE_USERNAME: "postgres"
+          APP_DATABASE_PASSWORD: "postgres"
+          APP_DATABASE_DATABASE: "postgres"
+
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Run Security Checks
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      - name: prepare gosec tmp dir
+        run: mkdir -p /tmp/gosec
+
+      - name: run security checks
+        uses: securego/gosec@v2.25.0
+        env:
+          GITHUB_AUTHENTICATION_TOKEN: ${{ secrets.RENOVATE_BOT_GITHUB_TOKEN }}
+        with:
+          args: "-no-fail -fmt html -out ./results.html ./services/backend/..."
+
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Run E2E Tests
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      # ...
+
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Create Snapshot Tag
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      - name: Retrieve Current Git Digest
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        id: get_git_digest
+        run: |
+          echo "::set-output name=digest::$(git rev-parse HEAD)"
+
+      - name: Retrieve SemVer Epoch
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        id: get_semver_epoch
+        run: |
+          echo "::set-output name=epoch::$(cat .github/helper/semversion/data/epoch.txt)"
+
+      - name: Get next version
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        id: get_next_version
+        uses: thenativeweb/get-next-version@main
+        with:
+          prefix: "v${{ steps.get_semver_epoch.outputs.epoch }}." # should output epch.major.minor.patch (epoch is for moron marketing purposes only)
+
+      - name: Show the next version
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        run: |
+          echo "Has Next Version: ${{ steps.get_next_version.outputs.hasNextVersion }}"
+          echo "Version: ${{ steps.get_next_version.outputs.version }}+${{ steps.get_git_digest.outputs.digest }}"
+
+      - name: Create and push new tag
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        id: create_and_push_tag
+        env:
+          TAG: ${{ steps.get_next_version.outputs.version }}+${{ steps.get_git_digest.outputs.digest }}
+        run: |
+          git tag $TAG
+          git push origin $TAG
+      
+      # ---------------------------------------------------------------------------------------------------------
+      #
+      #     Build Docker Containers
+      # 
+      # --------------------------------------------------------------------------------------------------------- 
+
+      - name: Build Docker Container Backend
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: .
+          file: ./devops/dockerfiles/Dockerfile.backend
+          push: false
+          tags: mybackendimage:latest
+          load: true
+      - name: Build Docker Container Frontend
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: .
+          file: ./devops/dockerfiles/Dockerfile.frontend
+          push: false
+          tags: myfrontendimage:latest
+          load: true
+
+      - name: Backend | Run Trivy Scan
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        run: |
+          docker run -v /var/run/docker.sock:/var/run/docker.sock:ro aquasec/trivy:0.69.3 \
+          image mybackendimage:latest \
+          --severity="HIGH,CRITICAL" \
+          --ignore-unfixed \
+          --format="table" \
+          --scanners="vuln,secret" \
+          --quiet \
+          --exit-code 1
+
+      - name: Frontend | Run Trivy Scan
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        run: |
+          docker run -v /var/run/docker.sock:/var/run/docker.sock:ro aquasec/trivy:0.69.3 \
+          image myfrontendimage:latest \
+          --severity="HIGH,CRITICAL" \
+          --ignore-unfixed \
+          --format="table" \
+          --scanners="vuln,secret" \
+          --quiet \
+          --exit-code 1
+
+      - name: Push the prebuild Frontend Image to GHCR Registry
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: .
+          file: ./devops/dockerfiles/Dockerfile.frontend
+          push: true
+          tags: ghcr.io/dcssoftware/bafog-manager-frontend:${{ steps.get_next_version.outputs.version }}
+
+      - name: Push the prebuild Backend Image to GHCR Registry
+        if: ${{ github.event.inputs.release-software == 'true' }}
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: .
+          file: ./devops/dockerfiles/Dockerfile.backend
+          push: true
+          tags: ghcr.io/dcssoftware/bafog-manager-backend:${{ steps.get_next_version.outputs.version }}

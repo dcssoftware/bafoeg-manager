@@ -1,0 +1,52 @@
+services:
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/grafana-data:/var/lib/grafana
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.nextreleaseplease.com`)&&PathPrefix(`/`)"
+      - "traefik.http.routers.grafana.priority=1"
+      - "traefik.http.routers.grafana.service=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.entrypoints=web,web-secure"
+    networks:
+      - intranet
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    restart: unless-stopped
+    command: "-config.file=/etc/loki/config.yaml"
+    healthcheck:
+      test: wget --quiet --tries=1 --output-document=- http://localhost:3100/ready | grep -q -w ready || exit 1
+      start_period: 20s
+      interval: 10s
+      timeout: 1s
+      retries: 12
+    ports:
+      - "3100:3100"
+    depends_on:
+      grafana:
+        condition: service_healthy
+    volumes:
+      - ./grafana/loki-config/config.yaml:/etc/loki/config.yaml:ro
+      - ./grafana/loki-data:/loki
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.loki.rule=Host(`loki.nextreleaseplease.com`)&&PathPrefix(`/`)"
+      - "traefik.http.routers.loki.priority=1"
+      - "traefik.http.routers.loki.service=loki"
+      - "traefik.http.services.loki.loadbalancer.server.port=3100"
+      - "traefik.http.routers.loki.entrypoints=web,web-secure"
+    networks:
+      - intranet

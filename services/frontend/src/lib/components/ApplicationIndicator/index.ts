@@ -1,0 +1,1 @@
+export { default as ApplicationIndicator } from './component.svelte';

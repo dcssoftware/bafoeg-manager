@@ -1,0 +1,54 @@
+FROM golang:1.26.1 AS basebuilder
+WORKDIR /app/backend
+
+ENV GOMODCACHE=/gomod-cache
+ENV GOCACHE=/go-cache
+
+RUN go env -w GOCACHE=${GOCACHE}
+RUN go env -w GOMODCACHE=${GOMODCACHE}
+RUN go env -w GOFLAGS=-mod=mod
+
+COPY --chmod=755 services/backend/go.mod /app/backend/go.mod
+COPY --chmod=755 services/backend/go.sum /app/backend/go.sum
+
+# install dependencies
+RUN --mount=type=cache,target=${GOMODCACHE} --mount=type=cache,target=/root/.config/go \ 
+    go mod download
+
+RUN --mount=type=cache,target=${GOCACHE} go install golang.org/x/tools/cmd/goimports
+RUN --mount=type=cache,target=${GOCACHE} go install github.com/swaggo/swag/cmd/swag@latest
+
+# ---------------------------------------------------
+# build backend
+
+FROM basebuilder AS backendbuilder
+
+# Install WebP development libraries for CGO
+RUN apt-get update && apt-get install -y libwebp-dev
+
+COPY --chmod=755 services/backend /app/backend/
+
+WORKDIR /app/backend
+
+# <<--- Error
+RUN swag fmt -g src/web-app/app.go 
+RUN swag init -g src/web-app/app.go -o swagger-docs 
+
+RUN --mount=type=cache,target=${GOMODCACHE} --mount=type=cache,target=$GOCACHE \
+    go build -o /app/backend/myapplication src/main.go
+
+# ---------------------------------------------------
+# run backend
+
+FROM alpine:3.23.3
+WORKDIR /app
+
+RUN apk update
+RUN apk add --no-cache libwebp poppler
+
+# bimg (libvips) dependencies
+RUN apk add vips-dev poppler-dev libavif-dev libheif-dev
+
+COPY --from=backendbuilder /app/backend/myapplication /app/myapplication
+
+CMD [ "./myapplication", "run" ]

@@ -1,0 +1,24 @@
+FROM node:24.14.1 as frontendbuilder
+WORKDIR /app
+
+# copy package manager stuff
+COPY services/frontend/package.json services/frontend/package-lock.json ./
+
+# install dependencies
+RUN --mount=type=cache,target=/usr/src/app/.npm \
+    npm set cache /usr/src/app/.npm && \
+    npm clean-install
+
+# copy frontend code
+COPY services/frontend .
+
+# build frontend
+RUN npm run build
+
+# ---------------------------------------------------
+FROM node:24.14.1-alpine
+WORKDIR /app
+
+COPY --from=frontendbuilder /app .
+
+CMD ["node","/app/build/index.js"]  

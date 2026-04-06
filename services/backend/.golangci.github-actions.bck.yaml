@@ -1,0 +1,104 @@
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unparam
+    - unconvert
+    - unused
+    - usestdlibvars
+    - varnamelen
+    - wastedassign
+    - tagliatelle
+    - tagalign
+    - stylecheck
+    - sqlclosecheck
+    - sloglint
+    - reassign
+    - prealloc
+    - perfsprint
+    - paralleltest
+    - nosprintfhostport
+    - nonamedreturns
+    # - noctx
+    - nlreturn
+    - nilnil
+    - nilnesserr
+    - nilerr
+    - nestif
+    - nakedret
+    - musttag
+    - mnd
+    - misspell
+    - makezero
+    - maintidx
+    - intrange
+    - interfacebloat
+    - importas
+    - iface
+    - grouper
+    - gosec
+    - goprintffuncname
+    - gomoddirectives
+    - goimports
+    - gofmt
+    - godox
+    # - godot
+    - gocyclo
+    - gocritic
+    - gochecknoinits
+    - gochecknoglobals
+    - gocheckcompilerdirectives
+    - funlen
+    - forcetypeassert
+    - forbidigo
+    - fatcontext
+    - exptostd
+    - exhaustruct
+    - exhaustive
+    - errname
+    - errchkjson
+    - err113
+    - durationcheck
+    - dupword
+    - dupl
+    - dogsled
+    - depguard
+    - decorder
+    - cyclop
+    - copyloopvar
+    - contextcheck
+    - containedctx
+    - bodyclose
+    - bidichk
+    - asciicheck
+    - asasalint
+
+linters-settings:
+  exhaustruct:
+    exclude:
+      - 'github.com/spf13/cobra\.Command$'
+      - 'github.com/gofiber/fiber/v2\.Config$'
+      - 'github.com/gofiber/fiber/v2\.Cookie$'
+      - 'github.com/gofiber/swagger\.Config$'
+      - 'github.com/dcssoftware/bafoeg-manager/src/resources/applications/http/http-models\.DeprecatedApplicationModel'
+  varnamelen:
+    ignore-decls:
+      - tx *sqlx.Tx
+      - t testing.T
+      - f *foo.Bar
+      - T any
+      - errMsg string
+      - c *fiber.Ctx
+      - db *sqlx.DB
+
+# output:
+#   formats:
+#     format: colored-line-number
+#     path: stdout  
+
+run:
+  timeout: 5m
+  tests: false

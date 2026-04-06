@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "svelte.svelte-vscode",
+        "phoenisx.cssvar",
+        "gencer.html-slim-scss-css-class-completion",
+        "golang.go",
+        "alefragnani.project-manager"
+    ]
+}

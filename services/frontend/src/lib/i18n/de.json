@@ -1,0 +1,260 @@
+{
+    "page": {
+        "titles": {
+            "home": "Startseite",
+            "error": "Fehler",
+            "login": "Login",
+            "logout": "Logout"
+        },
+        "navigation": {
+            "home": "Startseite",
+            "settings": "Einstellungen",
+            "bafog-applications": {
+                "header": "BAföG Anträge",
+                "create": "Antrag erstellen"
+            },
+            "imprint": "Impressum",
+            "gdpr-notice": "Datenschutz",
+            "account": {
+                "edit-account": "Account bearbeiten",
+                "logout": "Ausloggen"
+            },
+            "application": {
+                "header": "Anträge",
+                "labels": "Anträge Labels"
+            },
+            "application-rag": {
+                "header": "RAG Datenbasis",
+                "studierendenbafoeg": "Studierenden-BAföG",
+                "schuelerbafoeg": "Schüler-BAföG"
+            },
+            "applicants": {
+                "header": "Antragsteller",
+                "management": "Antragsteller Verwaltung"
+            },
+            "auto-aprovals": {
+                "header": "Auto-Genehmigungen"
+            },
+            "educational-institutions": {
+                "header": "Bildungseinrichtungen"
+            },
+            "cash-flows": {
+                "header": "Geldflüsse"
+            },
+            "questions-mailbox": {
+                "header": "Fragen-Postfach"
+            },
+            "e-akte": {
+                "header": "E-Akten Übersicht"
+            },
+            "finances": {
+                "header": "Finanzen"
+            },
+            "statistics": {
+                "header": "Statistiken"
+            },
+            "organization": {
+                "header": "Organisation"
+            },
+            "user-management": {
+                "header": "User Management"
+            }
+        },
+        "home": {
+            "header": "Willkommen, Mensch"
+        },
+        "application": {
+            "overview": {
+                "header": "Anträge Übersicht",
+                "create-new": "Neuer Antrag",
+                "no-applications-found": "Keine Anträge gefunden",
+                "statistics": {
+                    "total": "Anträge Gesamt",
+                    "new-today": "Heute eingegangen",
+                    "in-progress": "In Bearbeitung",
+                    "user-assigned": "User Zugewiesen"
+                },
+                "datatable": {
+                    "id": "ID",
+                    "count": "Zähler",
+                    "digest-short": "Digest (kurz)",
+                    "name": "Name",
+                    "address": "Adresse",
+                    "educational-institution": "Bildungseinrichtung",
+                    "educational-class-level": "Klassenstufe",
+                    "educational-institution-city": "Ort",
+                    "clerk": "Sachbearbeiter",
+                    "last-updated": "Zuletzt aktualisiert",
+                    "created": "Erstellt",
+                    "remaining-time": "Verbleibende Zeit",
+                    "status": "Status"
+                }
+            },
+            "file-upload": {
+                "popover-title": "Lade neue Dokumente hoch"
+            },
+            "applicant": {
+                "address": {
+                    "last-training": "Letzte Ausbildungsadresse",
+                    "permanent": "Permanente Wohnadresse"
+                },
+                "tabs": {
+                    "tab-headers": {
+                        "applications": "Anträge",
+                        "payment-history": "Zahlungsverlauf"
+                    }
+                }
+            },
+            "revisions": {
+                "header": "Revisionsübersicht",
+                "no-entries-found": "Keine Einträge gefunden"
+            },
+            "editor": {
+                "header": "Antrag bearbeiten",
+                "basic-infos": {
+                    "requested-education": "Angefragte Ausbildung",
+                    "current-application-id": "Antragsnummer",
+                    "current-application": {
+                        "created": "Antrag gestellt",
+                        "last-updated": "Antrag bearbeitet"
+                    },
+                    "processing-time": {
+                        "due-at": "Fälligkeitsdatum",
+                        "overdue": "Überfällig",
+                        "due-today": "Heute fällig",
+                        "due-in-one-day": "Morgen fällig",
+                        "overdue-since-days": "Tage überfällig",
+                        "due-in-days": "Tage bis fällig"
+                    },
+                    "previous-application": {
+                        "previous-bafoeg-amt": "Bisheriges BAföG Amt",
+                        "previous-application-id": "Bisherige Förderungsnummer"
+                    },
+                    "address": {
+                        "trainings": "Ausbildungsadresse",
+                        "permanent": "Permanente Wohnadresse",
+                        "school": "Schuladresse"
+                    },
+                    "versions": {
+                        "current-version": "Aktuelle Version",
+                        "previous-version": "Letzte Version"
+                    }
+                },
+                "tabs": {
+                    "tab-headers": {
+                        "parents": "Eltern",
+                        "parents-financial": "Eltern Finanzen",
+                        "own-financial": "Eigene Finanzen"
+                    }
+                }
+            }
+        },
+        "applicant": {
+            "application": {
+                "datatable": {
+                    "count": "Zähler",
+                    "school": "Schule",
+                    "degree": "Abschluss",
+                    "class-level": "Klassenstufe",
+                    "assigned-user": "Zugewiesener User",
+                    "status": "Status"
+                }
+            },
+            "not-found": "Antragsteller nicht gefunden",
+            "overview": {
+                "header": "DE-Akten Antragsteller Übersicht",
+                "datatable": {
+                    "count": "Zähler",
+                    "id": "ID",
+                    "firstname": "Vorname",
+                    "lastname": "Nachname",
+                    "maidenname": "Mädchenname",
+                    "streety": "Straße",
+                    "city": "Stadt",
+                    "country": "Land"
+                }
+            }
+        },
+        "school-management": {
+            "school-not-found": "Bildungseinrichtung nicht gefunden",
+            "header": "Bildungseinrichtungen",
+            "create-school": "Bildungseinrichtung hinzufügen",
+            "school": {
+                "header": "Bildungseinrichtung",
+                "degree-courses": "Abschlüsse / Lehrgänge",
+                "current-students-with-application": "Aktuelle Schüler / Studenten mit Antrag",
+                "datatables": {
+                    "current-students": {
+                        "nr": "#",
+                        "id": "ID",
+                        "name": "Name",
+                        "city": "Wohnort",
+                        "degree": "Abschluss",
+                        "class": "Klasse",
+                        "status": "Status"
+                    },
+                    "degree-courses": {
+                        "nr": "#",
+                        "degress-course": "Abschluss",
+                        "fos-required": "FOS Berufsabschluss Benötigt",
+                        "bos-qualifying": "BOS Berufsqualifizierender Abschluss",
+                        "work-degree-required": "Fachschule Berufsschule Benötigt"
+                    }
+                }
+            }
+        },
+        "settings": {
+            "header": "Einstellungen",
+            "device_header": "Geräte Einstellungen",
+            "device_description": "Folgende Einstellungen werden als Cookies nur für dieses Gerät gespeichert",
+            "language": {
+                "label": "Sprache der Applikation",
+                "placeholder": "Wähle deine Sprache aus",
+                "description": "Auswahl erzwingt einen sofortigen Reload der Seite"
+            }
+        },
+        "legal": {
+            "imprint": {
+                "header": "Impressum",
+                "this-website-template": "Diese Website ist ein Template von GitHub.",
+                "using-template-liable": "Die Benutzung des Templates fällt unter die MIT Lizenz und macht somit den Betreiber für alle Änderungen und das Template an sich haftbar.",
+                "project-on-github": "Das Projekt auf GitHub.com",
+                "licenses": "Lizenzen"
+            },
+            "gdpr-notice": {
+                "header": "Datenschutzerklärung"
+            },
+            "licenses": {
+                "header-software-licenses": "Software Lizenzen",
+                "header-participating-people": "Zum Projekterfolg beigetragene Personen",
+                "text-participating-people": "Hier dürfen sich alle Personen verewigen, welche an diesem Projekterfolg beigetragen haben",
+                "header-frontend": "Frontend Abhängigkeiten",
+                "header-backend": "Backend Abhängigkeiten"
+            }
+        }
+    },
+    "components": {
+        "user-picker": {
+            "no-user-selected": "Kein Benutzer ausgewählt",
+            "no-user-assigned": "Kein Benutzer zugewiesen"
+        }
+    },
+    "states": {
+        "loading": "Lädt...",
+        "time": {
+            "days": "Tage"
+        },
+        "application-status": {
+            "APPROVED": "Genehmigt",
+            "DENIED": "Abgelehnt",
+            "IN_PROGRESS": "In Bearbeitung",
+            "RESPONSE_AWAITED": "Warten auf Antwort"
+        }
+    },
+    "illegal-state-warning": {
+        "upload-document-after-completion": {
+            "approved": "Nach Abschluss eines Antrags kann dieser nicht mehr bearbeitet oder ergänzt werden",
+            "denied": "Nach Abschluss eines Antrags kann dieser nicht mehr bearbeitet oder ergänzt werden"
+        }
+    }
+}

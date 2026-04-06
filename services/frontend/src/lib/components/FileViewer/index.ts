@@ -1,0 +1,1 @@
+export { default as FileViewer } from "./component.svelte"

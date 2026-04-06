@@ -1,0 +1,1 @@
+export { default as ContentMask } from "./component.svelte"

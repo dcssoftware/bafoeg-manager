@@ -1,0 +1,5 @@
+export { default as logo } from "./logo.svg"
+export { default as logoPlain } from "./logo-plain.svg"
+export { default as AiAvatarPicture } from "./ai-avatar.png"
+export { default as LogoAuthentik } from "./company-logos/authentik.svg"
+export { default as LogoEntraId } from "./company-logos/entra-id.svg"

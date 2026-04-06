@@ -1,0 +1,208 @@
+include:
+  - path: devops/docker-compose/dev-dependencies/docker-compose.authentik.yaml
+    env_file: .env
+  - path: devops/docker-compose/dev-dependencies/docker-compose.grafana.yaml
+    env_file: .env
+  - path: devops/docker-compose/dev-dependencies/docker-compose.minio.yaml
+    env_file: .env
+  - path: devops/docker-compose/dev-dependencies/docker-compose.clamav.yaml
+    env_file: .env
+  - path: devops/docker-compose/dev-dependencies/docker-compose.imap.yaml
+    env_file: .env
+  # - path: devops/docker-compose/dev-dependencies/docker-compose.keygen.yaml
+  #   env_file: .env
+  # - path: devops/docker-compose/dev-dependencies/docker-compose.kafka.yaml
+  #   env_file: .env
+
+networks:
+  intranet:
+    internal: false
+    driver: bridge
+
+volumes:
+  app-postgres:
+
+services:
+  reverse-proxy:
+    image: "traefik:v3.6.12"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web-secure.address=:443"
+    networks:
+      intranet:
+        aliases:
+          - web.nextreleaseplease.com
+
+  # -----------------------------------------------------------------------------------------------------
+  #
+  #       FRONTEND
+  #
+  # -----------------------------------------------------------------------------------------------------
+
+  frontend:
+    image: node:25.9.0
+    container_name: web-ui
+    restart: unless-stopped
+    ports:
+      - 5173:5173
+    environment:
+      - FRONTEND_ENVIRONMENT_NAME="development"
+    volumes:
+      - ./services/frontend:/app
+    depends_on:
+      reverse-proxy:
+        condition: service_started
+    networks:
+      - intranet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=(Host(`web.nextreleaseplease.com`)&&PathPrefix(`/`))"
+      - "traefik.http.routers.frontend.priority=1"
+      - "traefik.http.routers.frontend.service=frontend"
+      - "traefik.http.services.frontend.loadbalancer.server.port=5173"
+      - "traefik.http.routers.frontend.entrypoints=web,web-secure"
+    command: ["sh", "-c", "cd /app && npm install && npm run dev"]
+
+  frontend-tests:
+    image: node:24.14.1
+    container_name: web-ui-test
+    restart: unless-stopped
+    volumes:
+      - ./services/frontend:/app
+    networks:
+      - intranet
+    command: ["sh", "-c", "cd /app && npm install && npm run test"]
+
+  # -----------------------------------------------------------------------------------------------------
+  #
+  #       BACKEND
+  #
+  # -----------------------------------------------------------------------------------------------------
+
+  backend:
+    # image: golang:1.25.7
+    build:
+      context: .
+      dockerfile: devops/dockerfiles/Dockerfile.backend-dev
+    container_name: web-api
+    volumes:
+      - ./services/backend:/app/backend
+    networks:
+      - intranet
+    ports:
+      - "2345:2345"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      reverse-proxy:
+        condition: service_started
+      authentik-server:
+        condition: service_started
+      authentik-worker:
+        condition: service_started
+      loki:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      clamav:
+        condition: service_healthy
+      imapserver:
+        condition: service_started
+
+    env_file:
+      - "./.env"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`web.nextreleaseplease.com`)&&(PathPrefix(`/api`)||PathPrefix(`/swagger`)||PathPrefix(`/debug`))"
+      - "traefik.http.routers.backend.priority=2"
+      - "traefik.http.routers.backend.service=backend"
+      - "traefik.http.services.backend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.backend.entrypoints=web,web-secure"
+    command: ["sh", "-c", "cd /app/backend && bash scripts/run-local-docker.sh"]
+
+  backend-integration-tests:
+    image: golang:1.25.7
+    build:
+      dockerfile_inline: |
+        FROM golang:1.25.7
+        WORKDIR /app
+
+        # install c dependencies for integration tests
+        apt update && apt install -y libwebp
+
+    container_name: web-api-test
+    volumes:
+      - ./services/backend:/app/backend
+    networks:
+      - intranet
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    tty: true
+    environment:
+      - TERM=xterm-256color`
+    command:
+      [
+        "sh",
+        "-c",
+        "cd /app/backend && bash scripts/test-local-docker-integrationtests.sh",
+      ]
+
+  # -----------------------------------------------------------------------------------------------------
+  #
+  #       DATABASE
+  #
+  # -----------------------------------------------------------------------------------------------------
+
+  postgres:
+    build:
+      context: ./devops/dockerfiles
+      dockerfile: Dockerfile.postgres
+    container_name: app-postgres
+    environment:
+      POSTGRES_USER: ${APP_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
+      POSTGRES_DB: ${APP_DATABASE_DATABASE}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    networks:
+      - intranet
+    volumes:
+      - "app-postgres:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d postgres'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  integration-tests-postgres:
+    build:
+      context: ./devops/dockerfiles
+      dockerfile: Dockerfile.postgres
+    container_name: app-postgres-integration-tests
+    environment:
+      POSTGRES_USER: ${APP_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${APP_DATABASE_PASSWORD}
+      POSTGRES_DB: ${APP_DATABASE_DATABASE}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5400:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d postgres'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      minio:
+        condition: service_healthy

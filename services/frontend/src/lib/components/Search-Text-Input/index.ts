@@ -1,0 +1,1 @@
+export { default as SearchTextInput } from "./component.svelte"

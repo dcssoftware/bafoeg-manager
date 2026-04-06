@@ -1,0 +1,1 @@
+export { default as OrganizationRegionPicker } from './component.svelte';

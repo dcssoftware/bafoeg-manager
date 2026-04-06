@@ -1,0 +1,1 @@
+export { default as ApplicantSelect } from "./component.svelte"
