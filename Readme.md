@@ -9,7 +9,7 @@
 
 Diese Anwendung wurde für BAföG Sachbearbeiter\*innen entwickelt, damit sie digitale und analoge Anträge in einem Portal bearbeiten können. Die Idee ist, alle relevanten Informationen für den Sachbearbeiter zu optimieren, notwenidge Kalkulationen bereits zu übernehmen und Anträge auf Vollständigkeit zu prüfen, bevor Sie ein Sachbearbeiter sieht.
 
-Desweiteren ist geplant, das BVA für die BAföG Rückzahlungen in das System zu integrieren, damit es eine End-2-End-Digitalisierung wird und Daten während des Austausches durch XDomea (XÖR Schnittstelle) verloren gehen. Somit liefern der BaföG Manager optimale Workflows und Datensicherheit.
+Desweiteren ist geplant, das BVA für die BAföG Rückzahlungen in das System zu integrieren, damit es eine End-2-End-Digitalisierung wird und Daten während des Austausches durch XDomea (XÖR Schnittstelle) nicht verloren gehen. Somit liefern der BaföG Manager optimale Workflows und Datensicherheit.
 
 <table>
   <tr>
