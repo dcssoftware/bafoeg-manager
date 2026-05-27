@@ -12,6 +12,8 @@
         "APP_LOGGER_LOKI_URL": "http://127.0.0.1:3100/loki/api/v1/push",
         "APP_S3_BUCKET_PROFILEPICTURE_BUCKETNAME": "integration-tests",
         "APP_CLAMAV_SCANNER_ADDRESS": "127.0.0.1",
-        "APP_EMAIL_SERVER_ADDR": "127.0.0.1"
+        "APP_EMAIL_SERVER_ADDR": "127.0.0.1",
+        "APP_OLLAMA_ADDRESS": "127.0.0.1",
+        "APP_CLAUDE_ENABLED": false,
     }
 }

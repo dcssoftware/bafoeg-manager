@@ -13,6 +13,7 @@ import (
 	swagger "github.com/gofiber/contrib/v3/swaggo"
 
 	"github.com/dcssoftware/bafoeg-manager/src/configuration"
+	artificialintelligence "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence"
 	dbHelper "github.com/dcssoftware/bafoeg-manager/src/helper/database"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/logger"
 	s3Helper "github.com/dcssoftware/bafoeg-manager/src/helper/s3-bucket"
@@ -80,6 +81,7 @@ var (
 	ErrCannotCreateDatabaseForUnknownReason = errors.New("cannot create the database for unknown reasons")
 
 	ErrCannotConnectToS3Bucket = errors.New("could not connect to s3 bucket")
+	ErrCannotCreateAIProvider  = errors.New("could not create AI provider")
 )
 
 type App struct {
@@ -235,7 +237,13 @@ func SetupServices() (*AppServices, error) {
 		return nil, s3ConnErr
 	}
 
-	return setupServicesCreateAppServices(dbConn, s3Conn)
+	aiprovider, aiproviderErr := artificialintelligence.CreateAIProvider()
+	if aiproviderErr != nil {
+		log.Println(ErrCannotCreateAIProvider)
+		return nil, aiproviderErr
+	}
+
+	return setupServicesCreateAppServices(dbConn, s3Conn, aiprovider)
 }
 
 func SetupServicesForIntegrationTest(testHash uint64) (*AppServices, error) {
@@ -253,10 +261,16 @@ func SetupServicesForIntegrationTest(testHash uint64) (*AppServices, error) {
 		return nil, s3ConnErr
 	}
 
-	return setupServicesCreateAppServices(dbConn, s3Conn)
+	aiprovider, aiproviderErr := artificialintelligence.CreateAIProvider()
+	if aiproviderErr != nil {
+		log.Println(ErrCannotCreateAIProvider)
+		return nil, aiproviderErr
+	}
+
+	return setupServicesCreateAppServices(dbConn, s3Conn, aiprovider)
 }
 
-func setupServicesCreateAppServices(dbConn *sqlx.DB, s3Conn *minio.Client) (*AppServices, error) {
+func setupServicesCreateAppServices(dbConn *sqlx.DB, s3Conn *minio.Client, aiConn *artificialintelligence.AIProvider) (*AppServices, error) {
 	logger.NewLogger()
 
 	filesStore := filesStorage.NewFileStorage(dbConn)
@@ -309,7 +323,7 @@ func setupServicesCreateAppServices(dbConn *sqlx.DB, s3Conn *minio.Client) (*App
 
 	ragStore := ragStorage.NewRAGStorage(dbConn)
 	ragStoreS3 := ragStorageS3.NewRAGStorageS3(s3Conn)
-	ragSvc := ragService.NewRAGService(ragStore, ragStoreS3)
+	ragSvc := ragService.NewRAGService(ragStore, ragStoreS3, aiConn)
 	ragHandler := ragHttp.NewRAGHandler(ragSvc)
 
 	cronjobInstance, cronjobInstanceErr := cronjobs.NewCronjob(dbConn, s3Conn)
