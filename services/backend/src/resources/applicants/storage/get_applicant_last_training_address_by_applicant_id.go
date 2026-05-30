@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"database/sql"
-
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors"
 	"github.com/go-sqlx/sqlx"
 
@@ -38,9 +36,6 @@ func (s *ApplicantStorage) GetApplicantsLastTrainingsAddressByApplicantID(tx *sq
 		}
 
 		switch err {
-
-		case sql.ErrNoRows:
-			return nil, customerrors.NewDatabaseNotFoundError(err, "", sqlquery, data)
 
 		default:
 			return nil, customerrors.NewDatabaseError(err, "", "Cannot get applicants last training address", sqlquery, data)

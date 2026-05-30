@@ -2,38 +2,39 @@ package rag
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/dcssoftware/bafoeg-manager/src/configuration"
-	ai "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence"
+	artificialintelligence "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence/rag/models"
-	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/embeddings"
-	"github.com/tmc/langchaingo/llms/ollama"
-	"github.com/tmc/langchaingo/memory"
+	"github.com/tmc/langchaingo/llms"
+	"github.com/tmc/langchaingo/schema"
 	"github.com/tmc/langchaingo/vectorstores/pgvector"
 )
 
-func RequestRAG(prompt string, pgDatabasename string, messages []models.ConversationMessage, streamfunc func(ctx context.Context, chunk []byte) error) (response string, err error) {
-
-	ollamaLLMEmbedding, ollamaLLMEmbeddingErr := ai.CreateOllamaConnection(
-		ollama.WithModel(configuration.OllamaAPI.EmbeddingModelname),
-	)
-	if ollamaLLMEmbeddingErr != nil {
-		return "", ollamaLLMEmbeddingErr
+func RequestRAG(provider *artificialintelligence.AIProvider, prompt string, pgDatabasename string, messages []models.ConversationMessage, streamFunc func(ctx context.Context, reasoningChunk []byte, chunk []byte) error) (*llms.ContentResponse, error) {
+	if provider == nil {
+		return nil, errors.New("ai provider is nil")
 	}
 
-	ollamaLLMRequesting, ollamaLLMRequestingErr := ai.CreateOllamaConnection(
-		ollama.WithModel(configuration.OllamaAPI.RequestingModelname),
-	)
-	if ollamaLLMRequestingErr != nil {
-		return "", ollamaLLMRequestingErr
+	requestModel, _, requestModelErr := provider.DefaultRequestModelInstance()
+	if requestModelErr != nil {
+		return nil, requestModelErr
+	}
+	if requestModel == nil {
+		return nil, errors.New("default request model is nil")
+	}
+	if provider.OllamaEmbedder == nil {
+		return nil, errors.New("default embedding provider is nil")
 	}
 
-	embedder, embedderErr := embeddings.NewEmbedder(ollamaLLMEmbedding)
+	embedder, embedderErr := embeddings.NewEmbedder(
+		provider.OllamaEmbedder,
+	)
 	if embedderErr != nil {
-		return "", embedderErr
+		return nil, embedderErr
 	}
 
 	var dbMetaDataFilter map[string]any
@@ -44,18 +45,61 @@ func RequestRAG(prompt string, pgDatabasename string, messages []models.Conversa
 		pgvector.WithCollectionMetadata(dbMetaDataFilter),
 	)
 	if pgvectorStoreErr != nil {
-		return "", pgvectorStoreErr
+		return nil, pgvectorStoreErr
 	}
 
 	var maxDocuments int = 10
 	schemaDocuments, schemaDocumentsErr := pgvectorStore.SimilaritySearch(context.Background(), prompt, maxDocuments)
 	if schemaDocumentsErr != nil {
-		return "", schemaDocumentsErr
+		return nil, schemaDocumentsErr
 	}
 
-	// concatenate retrieved context
+	_ = schemaDocuments
+
+	var messageContent []llms.MessageContent = []llms.MessageContent{}
+
+	for _, message := range messages {
+		messageContent = append(messageContent, llms.MessageContent{
+			Role: llms.ChatMessageTypeHuman,
+			Parts: []llms.ContentPart{
+				llms.TextPart(message.Message),
+			},
+		})
+	}
+
+	// messageContent = append(messageContent, llms.MessageContent{
+	// 	Role: llms.ChatMessageTypeHuman,
+	// 	Parts: []llms.ContentPart{
+	// 		llms.TextPart(buildRagPrompt(schemaDocuments, prompt)),
+	// 	},
+	// })
+
+	messageContent = append(messageContent, llms.MessageContent{
+		Role: llms.ChatMessageTypeHuman,
+		Parts: []llms.ContentPart{
+			llms.TextPart(prompt),
+		},
+	})
+
+	response, responseErr := requestModel.GenerateContent(
+		context.Background(),
+		messageContent,
+		llms.WithTemperature(1),
+		llms.WithModel(provider.DefaultRequestModelName()),
+		llms.WithInterleaveThinking(true),
+		llms.WithMaxTokens(8000),
+		llms.WithStreamingReasoningFunc(streamFunc),
+		llms.WithStreamThinking(true),
+		llms.WithReturnThinking(true),
+		llms.WithThinkingMode(llms.ThinkingModeMedium),
+	)
+
+	return response, responseErr
+}
+
+func buildRagPrompt(schemaDocuments []schema.Document, prompt string) string {
 	var ctxBuilder strings.Builder
-	ctxBuilder.WriteString("Du bist ein Assistent im BAföG Genehmigungsverfahren. Du antwortest NUR mit Daten aus deinem Context! ")
+	ctxBuilder.WriteString("Du bist ein Assistent im BAföG Genehmigungsverfahren. Du antwortest NUR mit Daten aus deinem Context!")
 	ctxBuilder.WriteString("Antworte prägnant, nutze lieber den Kontakt als eigene Trainingsdaten und liefere möglichst viele Quellenangaben. ")
 	ctxBuilder.WriteString("Nutze den folgenden Kontext um die Frage zu beantworten.")
 	ctxBuilder.WriteString("\n\n")
@@ -67,7 +111,6 @@ func RequestRAG(prompt string, pgDatabasename string, messages []models.Conversa
 		todo lieber in html mäßige xml chunks unterteilen, damit die quellenangaben besser erkannt werden können
 	*/
 	for _, r := range schemaDocuments {
-		// documentid := r.Metadata[""]
 		documentname := ""
 		documentpage := r.Metadata["page"]
 		ctxBuilder.WriteString("<chunk>\n")
@@ -84,40 +127,5 @@ func RequestRAG(prompt string, pgDatabasename string, messages []models.Conversa
 	ctxBuilder.WriteString("\n\n")
 	ctxBuilder.WriteString("Antworte möglichst genau! Sollte die Antwort nicht im Kontext stehen, antworte mit 'Dazu liegen mir derzeit keine Informationen im Kontext vor'.\n")
 
-	ragPrompt := ctxBuilder.String()
-
-	// godump.Dump(ragPrompt)
-
-	chatMemory := memory.NewConversationBuffer()
-
-	for _, message := range messages {
-
-		switch strings.ToLower(message.Role) {
-		case "user":
-			err = chatMemory.ChatHistory.AddUserMessage(context.Background(), message.Message)
-			if err != nil {
-				return "", err
-			}
-		default:
-			err = chatMemory.ChatHistory.AddAIMessage(context.Background(), message.Message)
-			if err != nil {
-				return "", err
-			}
-		}
-	}
-
-	conversationChain := chains.NewConversation(ollamaLLMRequesting, chatMemory)
-
-	response, responseErr := chains.Run(
-		context.Background(),
-		conversationChain,
-		ragPrompt,
-		chains.WithTemperature(0),
-		chains.WithStreamingFunc(streamfunc),
-	)
-	if responseErr != nil {
-		return "", responseErr
-	}
-
-	return response, nil
+	return ctxBuilder.String()
 }

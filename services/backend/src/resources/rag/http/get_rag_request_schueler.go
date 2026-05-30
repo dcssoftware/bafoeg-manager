@@ -9,6 +9,7 @@ import (
 	customerrorconst "github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors/custom-error-const"
 	sessionLocals "github.com/dcssoftware/bafoeg-manager/src/web-app/middlewares/http/consts/session-locals"
 	"github.com/gofiber/fiber/v3"
+	"github.com/goforj/godump"
 	"github.com/google/uuid"
 )
 
@@ -42,7 +43,17 @@ func (h *RAGHandler) GetRAGrequestSchüler(c fiber.Ctx) error {
 			conversationID,
 			userID,
 			prompt,
-			func(ctx context.Context, chunk []byte) error {
+			func(ctx context.Context, reasoningChunk []byte, chunk []byte) error {
+
+				godump.Dump("HERE")
+
+				if _, writeErr := w.Write(reasoningChunk); writeErr != nil {
+					return writeErr
+				}
+
+				if _, writeErr := w.Write([]byte("\n----------\n")); writeErr != nil {
+					return writeErr
+				}
 
 				// Write each chunk to the response stream
 				if _, writeErr := w.Write(chunk); writeErr != nil {
@@ -61,5 +72,3 @@ func (h *RAGHandler) GetRAGrequestSchüler(c fiber.Ctx) error {
 	})
 	return nil
 }
-
-// fiber:context-methods migrated

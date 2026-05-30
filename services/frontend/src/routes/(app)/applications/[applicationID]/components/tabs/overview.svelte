@@ -99,7 +99,7 @@
 <style lang="sass">
 .alert-warning
     background-color: var(--color-red-80)
-    color: var(--font-color)
+    color: var(--font-color-white)
     display: flex
     flex-direction: column
     gap: 1rem

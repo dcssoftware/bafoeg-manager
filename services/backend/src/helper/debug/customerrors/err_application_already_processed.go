@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	errorconst "github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors/custom-error-const"
+	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/logger"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/runtime"
 	"github.com/google/uuid"
 )
 
 type ApplicationAlreadyProcessedError struct {
-	ID uuid.UUID
+	ID *uuid.UUID
 
 	file       string
 	lineNumber int
@@ -26,7 +27,7 @@ func NewApplicationAlreadyProcessedError() *ApplicationAlreadyProcessedError {
 	errUuid := uuid.New()
 
 	model := &ApplicationAlreadyProcessedError{
-		ID: errUuid,
+		ID: &errUuid,
 
 		file:       file,
 		lineNumber: lineNumber,
@@ -35,6 +36,15 @@ func NewApplicationAlreadyProcessedError() *ApplicationAlreadyProcessedError {
 		httpUserMessage: errorconst.APPLICATION_ALREADY_PROCESSED_ERROR_MESSAGE,
 		httpStatus:      http.StatusBadRequest,
 	}
+
+	logger.ErrorWithCustomLocation(
+		model.ID,
+		model.httpUserMessage,
+		model.file,
+		model.lineNumber,
+		nil,
+		"",
+	)
 
 	return model
 }

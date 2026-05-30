@@ -1,6 +1,7 @@
 package service
 
 import (
+	artificialintelligence "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors"
 	"github.com/dcssoftware/bafoeg-manager/src/resources/rag/service/models"
 	"github.com/go-sqlx/sqlx"
@@ -10,12 +11,14 @@ import (
 type RAGService struct {
 	storage   RAGStorage
 	storageS3 RAGStorageS3
+	aiConn    *artificialintelligence.AIProvider
 }
 
-func NewRAGService(storage RAGStorage, storageS3 RAGStorageS3) *RAGService {
+func NewRAGService(storage RAGStorage, storageS3 RAGStorageS3, aiConn *artificialintelligence.AIProvider) *RAGService {
 	return &RAGService{
 		storage:   storage,
 		storageS3: storageS3,
+		aiConn:    aiConn,
 	}
 }
 

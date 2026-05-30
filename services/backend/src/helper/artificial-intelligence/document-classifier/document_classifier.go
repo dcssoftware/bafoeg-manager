@@ -3,11 +3,11 @@ package documentclassifier
 import (
 	"context"
 
-	ai "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence"
+	ollamaProvider "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence/provider/ollama"
 )
 
 func ClassifyDocument(content []byte) {
-	llm, llmErr := ai.CreateOllamaConnection()
+	llm, llmErr := ollamaProvider.CreateOllamaConnection()
 	if llmErr != nil {
 		return
 	}

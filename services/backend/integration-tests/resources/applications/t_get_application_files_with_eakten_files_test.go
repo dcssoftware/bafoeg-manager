@@ -20,8 +20,6 @@ func TestGetApplicationFilesWithEakteFiles(t *testing.T) {
 	testSetup.Request(http.MethodGet, "/api/v1/applications/"+applicationID.String()+"/files", nil, &applicationStruct)
 	assert.Empty(t, applicationStruct.Files, "should be empty applications")
 
-	testSetup.AppServices.ApplicationsService.UploadApplicationFile(nil, applicationID.String(), "example01.pdf", assets.ExampleFilePDF)
-
 	akteID, uploadAkteErr := testSetup.AppServices.EakteSvc.UploadEakte(nil, assets.XDomeaMessageStupid, "xdomea-message-stupid.zip")
 	assert.NoError(t, uploadAkteErr)
 
@@ -29,9 +27,9 @@ func TestGetApplicationFilesWithEakteFiles(t *testing.T) {
 
 	fileCount, fileCountErr := testSetup.AppServices.ApplicationsService.GetApplicationFilesByApplicationIDCount(nil, applicationID.String())
 	assert.NoError(t, fileCountErr)
-	assert.Equal(t, 4, int(fileCount))
+	assert.Equal(t, 3, int(fileCount))
 
 	files, fileErr := testSetup.AppServices.ApplicationsService.GetApplicationFilesByApplicationID(nil, 1, applicationID.String())
 	assert.NoError(t, fileErr)
-	assert.Len(t, files, 4)
+	assert.Len(t, files, 3)
 }

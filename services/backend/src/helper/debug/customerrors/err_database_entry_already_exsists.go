@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	errorconst "github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors/custom-error-const"
+	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/logger"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/runtime"
 	"github.com/google/uuid"
 )
 
 type DatabaseEntryAlreadyExistsErr struct {
-	ID uuid.UUID
+	ID *uuid.UUID
 
 	file       string
 	lineNumber int
@@ -28,7 +29,7 @@ func NewDatabaseEntryAlreadyExistsErr() *DatabaseEntryAlreadyExistsErr {
 	errUuid := uuid.New()
 
 	model := &DatabaseEntryAlreadyExistsErr{
-		ID: errUuid,
+		ID: &errUuid,
 
 		file:       file,
 		lineNumber: lineNumber,
@@ -43,6 +44,15 @@ func NewDatabaseEntryAlreadyExistsErr() *DatabaseEntryAlreadyExistsErr {
 			errorconst.DATABASE_CONFLICT_ERROR_MESSAGE,
 		),
 	}
+
+	logger.ErrorWithCustomLocation(
+		model.ID,
+		model.httpUserMessage,
+		model.file,
+		model.lineNumber,
+		model.error,
+		"",
+	)
 
 	return model
 }
