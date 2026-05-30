@@ -24,11 +24,11 @@ type DokumentModelSource struct {
 }
 
 type DokumentModelFile struct {
-	ID      uuid.UUID  `json:"id"`
-	Name    string     `json:"name"`
-	Type    string     `json:"file_type"`
-	Size    float64    `json:"file_size"`
-	Created *time.Time `json:"created"`
+	ID      uuid.UUID `json:"id"`
+	Name    string    `json:"name"`
+	Type    string    `json:"file_type"`
+	Size    float64   `json:"file_size"`
+	Created FlexTime  `json:"created"`
 }
 
 type DokumentModelVorgang struct {
@@ -67,7 +67,7 @@ func (m DokumentModelFile) ToServiceModel() *serviceModels.DokumentModelFile {
 		Name:    m.Name,
 		Size:    m.Size,
 		Type:    m.Type,
-		Created: *m.Created,
+		Created: m.Created.Time,
 	}
 }
 
