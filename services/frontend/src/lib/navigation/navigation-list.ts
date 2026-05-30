@@ -1,4 +1,4 @@
-import { IconBook, IconEnvelope, IconHome, IconPieChart, IconSchool, IconStudent, IconCartFlatbed, IconUsers, IconSackDollars, IconSitemap } from "$lib/components/Icons";
+import { IconBook, IconEnvelope, IconHome, IconPieChart, IconSchool, IconStudent, IconCartFlatbed, IconUsers, IconSackDollars, IconSitemap, IconCalendar } from "$lib/components/Icons";
 import { _ } from "svelte-i18n";
 
 export type NavigationItemsType = NavigationItemType[]
@@ -91,6 +91,11 @@ export function getNavigationItems(store: CallableFunction): NavigationItemsType
             name: store("page.navigation.organization.header"),
             href: "/organization",
             icon: IconSitemap,
+        },
+        {
+            name: store("page.navigation.calendar.header"),
+            href: "/calendar",
+            icon: IconCalendar,
         },
         {
             name: store("page.navigation.user-management.header"),
