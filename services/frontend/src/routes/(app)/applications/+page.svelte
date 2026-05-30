@@ -21,6 +21,7 @@
   import { Button } from "$lib/components/Button";
   import { OrganizationBehördePicker } from "$lib/components/OrganizationBehordePicker";
   import { OrganizationAbteilungPicker } from "$lib/components/OrganizationAbteilungPicker";
+  import { onDestroy } from "svelte";
 
   let applicationsPromise:
     | Promise<ApplicationModelResponseType | undefined>
@@ -38,6 +39,67 @@
   let selectedOrganizationBehördeID: string | undefined = $state(undefined);
   let selectedOrganizationAbteilungID: string | undefined = $state(undefined);
 
+  let showTableRowOptions: boolean = $state(false);
+  let showTableRowOptionElement: HTMLElement | undefined = $state();
+  let showTableRowOptionParentElement: HTMLElement | undefined = $state();
+  let selectedTableRowOptions: {
+    id: string;
+    displayName: string;
+    status: boolean;
+  }[] = $state([
+    {
+      id: "counter",
+      displayName: $_("page.application.overview.datatable.count"),
+      status: true,
+    },
+    {
+      id: "digest",
+      displayName: $_("page.application.overview.datatable.digest-short"),
+      status: true,
+    },
+    {
+      id: "applicant_name",
+      displayName: $_("page.application.overview.datatable.name"),
+      status: true,
+    },
+    {
+      id: "education_name",
+      displayName: $_(
+        "page.application.overview.datatable.educational-institution",
+      ),
+      status: true,
+    },
+    {
+      id: "grade",
+      displayName: $_(
+        "page.application.overview.datatable.educational-class-level",
+      ),
+      status: true,
+    },
+    {
+      id: "cty",
+      displayName: $_(
+        "page.application.overview.datatable.educational-institution-city",
+      ),
+      status: true,
+    },
+    {
+      id: "assignee",
+      displayName: $_("page.application.overview.datatable.clerk"),
+      status: true,
+    },
+    {
+      id: "status",
+      displayName: $_("page.application.overview.datatable.status"),
+      status: true,
+    },
+    {
+      id: "remaining_time",
+      displayName: $_("page.application.overview.datatable.remaining-time"),
+      status: true,
+    },
+  ]);
+
   let applicationPageNumber: number = $state(1);
 
   function setFilter(
@@ -45,7 +107,7 @@
     orgaRegionID?: string,
     orgaBehördeID?: string,
     orgaAbteilungID?: string,
-    text?: string
+    text?: string,
   ) {
     selectedOrganizationRegionID = orgaRegionID;
     selectedOrganizationBehördeID = orgaBehördeID;
@@ -67,7 +129,7 @@
       selectedOrganizationRegionID,
       selectedOrganizationBehördeID,
       selectedOrganizationAbteilungID,
-      filterSearchTerm
+      filterSearchTerm,
     );
   }
 
@@ -78,7 +140,7 @@
       selectedOrganizationRegionID,
       undefined,
       undefined,
-      filterSearchTerm
+      filterSearchTerm,
     );
   }
 
@@ -89,7 +151,7 @@
       selectedOrganizationRegionID,
       selectedOrganizationBehördeID,
       undefined,
-      filterSearchTerm
+      filterSearchTerm,
     );
   }
 
@@ -100,7 +162,7 @@
       selectedOrganizationRegionID,
       selectedOrganizationBehördeID,
       selectedOrganizationAbteilungID,
-      filterSearchTerm
+      filterSearchTerm,
     );
   }
 
@@ -111,7 +173,7 @@
       selectedOrganizationRegionID,
       selectedOrganizationBehördeID,
       selectedOrganizationAbteilungID,
-      filterSearchTerm
+      filterSearchTerm,
     );
   }
 
@@ -120,16 +182,38 @@
       pageNumber,
       selectedUserID,
       filterShowFinishedApplications,
-      filterSearchTerm
+      filterSearchTerm,
     );
     applicationsMetricsPromise = getApplicationsMetrics(
       selectedUserID ?? "",
-      filterShowFinishedApplications
+      filterShowFinishedApplications,
     );
   }
 
   $effect(() => {
     loadData(applicationPageNumber);
+  });
+
+  $effect(() => {
+    if (showTableRowOptionElement && showTableRowOptionParentElement) {
+      const handleClick = (e: MouseEvent) => {
+        const dialogDimensions =
+          showTableRowOptionParentElement!.getBoundingClientRect();
+        if (
+          dialogDimensions !== null &&
+          (e.clientX < dialogDimensions.left ||
+            e.clientX > dialogDimensions.right ||
+            e.clientY < dialogDimensions.top ||
+            e.clientY > dialogDimensions.bottom)
+        ) {
+          showTableRowOptions = false;
+        }
+      };
+      document.addEventListener("click", handleClick);
+      return () => {
+        document?.removeEventListener("click", handleClick);
+      };
+    }
   });
 </script>
 
@@ -208,9 +292,29 @@
       <input type="checkbox" bind:checked={filterShowFinishedApplications} />
       <span>Bearbeitete anzeigen</span>
     </label>
-    <label>
-      <Button>Tabellen Spalten</Button>
-    </label>
+    <div class="extra-menu" bind:this={showTableRowOptionParentElement}>
+      <label>
+        <Button onclick={() => (showTableRowOptions = !showTableRowOptions)}
+          >Tabellen Spalten</Button
+        >
+      </label>
+      <div
+        class="menu"
+        bind:this={showTableRowOptionElement}
+        class:show-menu={showTableRowOptions}
+      >
+        <ul>
+          {#each selectedTableRowOptions as item}
+            <li>
+              <label>
+                <input type="checkbox" bind:checked={item.status} />
+                <span>{item.displayName}</span>
+              </label>
+            </li>
+          {/each}
+        </ul>
+      </div>
+    </div>
   </div>
 
   <div class="filter-components">
@@ -235,49 +339,11 @@
       <DataTable>
         <DataTableHead>
           <DataTableRow>
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.count"
-              )}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.digest-short"
-              )}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_("page.application.overview.datatable.name")}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.educational-institution"
-              )}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.educational-class-level"
-              )}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.educational-institution-city"
-              )}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.clerk"
-              )}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.status"
-              )}</DataTableColumn
-            >
-            <DataTableColumn
-              >{$_(
-                "page.application.overview.datatable.remaining-time"
-              )}</DataTableColumn
-            >
+            {#each selectedTableRowOptions as column}
+              {#if column.status}
+                <DataTableColumn>{column.displayName}</DataTableColumn>
+              {/if}
+            {/each}
           </DataTableRow>
         </DataTableHead>
         <DataTableBody>
@@ -293,43 +359,59 @@
                   unit: "percent",
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 2,
-                }
+                },
               )}
             {@const remainingTimeClass = getRemainingTimeColor(
-              remainingDaysInPercent
+              remainingDaysInPercent,
             )}
 
             <DataTableRow onClick={() => goto("/applications/" + row.id)}>
-              <DataTableColumn align="Right">{count}</DataTableColumn>
-              <DataTableColumn title={row.id}
-                >{row.id.split("-")[0]}</DataTableColumn
-              >
-              <DataTableColumn
-                >{row.applicant.firstname ?? ""}
-                {row.applicant.lastname}</DataTableColumn
-              >
-              <DataTableColumn>{row.school.name}</DataTableColumn>
-              <DataTableColumn align="Right">{row.classLevel}</DataTableColumn>
-              <DataTableColumn
-                >{row.school.address.city} ({row.school.address
-                  .country})</DataTableColumn
-              >
-              <DataTableColumn>
-                {#if row.assignedUser !== null}
-                  {row.assignedUser.displayName}
-                {:else}
-                  {$_("components.user-picker.no-user-assigned")}
-                {/if}
-              </DataTableColumn>
-              <DataTableColumn
-                >{$_(
-                  "states.application-status." + row.status.identifier
-                )}</DataTableColumn
-              >
-              <DataTableColumn align="Right" classList={remainingTimeClass}
-                >{remainingDays}
-                {$_("states.time.days")} ({remainingDaysInPercentString} %)</DataTableColumn
-              >
+              {#if selectedTableRowOptions.find((el) => el.id === "counter")?.status}
+                <DataTableColumn align="Right">{count}</DataTableColumn>
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "digest")?.status}
+                <DataTableColumn>{row.id.split("-")[0]}</DataTableColumn>
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "applicant_name")?.status}
+                <DataTableColumn
+                  >{row.applicant.firstname ?? ""}
+                  {row.applicant.lastname}</DataTableColumn
+                >
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "education_name")?.status}
+                <DataTableColumn>{row.school.name}</DataTableColumn>
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "grade")?.status}
+                <DataTableColumn align="Right">{row.classLevel}</DataTableColumn
+                >
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "cty")?.status}
+                <DataTableColumn
+                  >{row.school.address.city} ({row.school.address
+                    .country})</DataTableColumn
+                >
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "assignee")?.status}
+                <DataTableColumn
+                  >{#if row.assignedUser !== null}
+                    {row.assignedUser.displayName}
+                  {:else}
+                    {$_("components.user-picker.no-user-assigned")}
+                  {/if}
+                </DataTableColumn>
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "status")?.status}
+                <DataTableColumn
+                  >{$_(
+                    "states.application-status." + row.status.identifier,
+                  )}</DataTableColumn
+                >
+              {/if}
+              {#if selectedTableRowOptions.find((el) => el.id === "remaining_time")?.status}
+                <DataTableColumn align="Right"
+                  >{$_("states.time.days")} ({remainingDaysInPercentString} %)</DataTableColumn
+                >
+              {/if}
             </DataTableRow>
           {/each}
         </DataTableBody>
@@ -381,6 +463,21 @@
     gap: 2rem
     label
       display: block
+    .extra-menu
+      position: relative
+      .menu
+        position: absolute
+        background-color: var(--background-color-tertiary)
+        display: none
+        &.show-menu
+          display: block
+        ul
+          list-style-type: none
+          padding: 1rem
+          margin: 0
+          display: flex
+          flex-direction: column
+          gap: 0.5rem
   .controlls
     display: flex
     gap: 1rem
