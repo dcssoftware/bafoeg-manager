@@ -80,6 +80,30 @@ var (
 		TextSplitterChunkOverlap: GetEnvOrDefaultInt("OLLAMA_VECTOR_RAG_TEXTSPLITTER_CHUNK_OVERLAP", 300),
 	}
 
+	ClaudeAPI = ClaudeAPIModel{
+		Enabled:             GetEnvOrDefaultBool("CLAUDE_ENABLED", false),
+		Token:               GetEnvOrDefaultString("CLAUDE_API_TOKEN", ""),
+		RequestingModelname: GetEnvOrDefaultString("CLAUDE_REQUESTING_MODELNAME", "claude-opus-4-6"),
+	}
+
+	OpenAIAPI = OpenAIAPIModel{
+		Enabled:             GetEnvOrDefaultBool("OPENAI_ENABLED", false),
+		Token:               GetEnvOrDefaultString("OPENAI_API_TOKEN", ""),
+		RequestingModelname: GetEnvOrDefaultString("OPENAI_REQUESTING_MODELNAME", "claude-opus-4-6"),
+	}
+
+	MistralAPI = MistralAPIModel{
+		Enabled:             GetEnvOrDefaultBool("MISTRAL_ENABLED", false),
+		Token:               GetEnvOrDefaultString("MISTRAL_API_TOKEN", ""),
+		RequestingModelname: GetEnvOrDefaultString("MISTRAL_REQUESTING_MODELNAME", "claude-opus-4-6"),
+	}
+
+	GeminiAPI = MistralAPIModel{
+		Enabled:             GetEnvOrDefaultBool("GEMINI_ENABLED", false),
+		Token:               GetEnvOrDefaultString("GEMINI_API_TOKEN", ""),
+		RequestingModelname: GetEnvOrDefaultString("GEMINI_REQUESTING_MODELNAME", "claude-opus-4-6"),
+	}
+
 	Logger = LoggerModel{
 		Loki: LoggerModelLoki{
 			Enabled: GetEnvOrDefaultBool("LOGGER_LOKI_ENABLED", true),

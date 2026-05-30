@@ -109,6 +109,30 @@ type OllamaAPIModel struct {
 	TextSplitterChunkOverlap int
 }
 
+type ClaudeAPIModel struct {
+	Enabled             bool
+	Token               string
+	RequestingModelname string
+}
+
+type OpenAIAPIModel struct {
+	Enabled             bool
+	Token               string
+	RequestingModelname string
+}
+
+type MistralAPIModel struct {
+	Enabled             bool
+	Token               string
+	RequestingModelname string
+}
+
+type GeminiAPIModel struct {
+	Enabled             bool
+	Token               string
+	RequestingModelname string
+}
+
 type ApplicationConfigurationModel struct {
 	MaxLegalProcessingTime uint
 	IsDevEnvironment       bool

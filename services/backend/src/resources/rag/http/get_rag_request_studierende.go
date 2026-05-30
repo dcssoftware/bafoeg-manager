@@ -14,10 +14,10 @@ func (h *RAGHandler) GetRAGrequestStudierende(c fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString("")
 	}
 
-	response, responseErr := h.service.GetRAGrequestStudierenden(prompt)
+	_, responseErr := h.service.GetRAGrequestStudierenden(prompt)
 	if responseErr != nil {
 		return c.Status(http.StatusInternalServerError).SendString(responseErr.Error())
 	}
 
-	return c.Status(http.StatusOK).SendString(response)
+	return c.Status(http.StatusOK).SendString("")
 }

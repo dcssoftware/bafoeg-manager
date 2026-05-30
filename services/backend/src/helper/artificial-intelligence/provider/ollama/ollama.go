@@ -16,6 +16,8 @@ func CreateOllamaConnection(opts ...ollama.Option) (*ollama.LLM, error) {
 
 	ollamaArguments := append(opts, ollama.WithServerURL(ollamaURL))
 	ollamaArguments = append(ollamaArguments, ollama.WithHTTPClient(CreateCustomOllamaHTTPClient()))
+	ollamaArguments = append(ollamaArguments, ollama.WithThink(true))
+	ollamaArguments = append(ollamaArguments, ollama.WithKeepAlive("5m"))
 
 	ollamaLLM, ollamaLLMErr := ollama.New(
 		ollamaArguments...,

@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	errorconst "github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors/custom-error-const"
+	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/logger"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/runtime"
 	"github.com/google/uuid"
 )
 
 type ValidationError struct {
-	ID uuid.UUID
+	ID *uuid.UUID
 
 	file       string
 	lineNumber int
@@ -28,7 +29,7 @@ func NewValidationError(err error) *ValidationError {
 	errUuid := uuid.New()
 
 	model := &ValidationError{
-		ID: errUuid,
+		ID: &errUuid,
 
 		file:       file,
 		lineNumber: lineNumber,
@@ -39,6 +40,15 @@ func NewValidationError(err error) *ValidationError {
 
 		error: err,
 	}
+
+	logger.ErrorWithCustomLocation(
+		model.ID,
+		model.httpUserMessage,
+		model.file,
+		model.lineNumber,
+		model.error,
+		"",
+	)
 
 	return model
 }

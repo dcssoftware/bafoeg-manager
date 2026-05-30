@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/dcssoftware/bafoeg-manager/src/configuration"
-	ai "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence"
+	ollamaProvider "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence/provider/ollama"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/logger"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/encoding"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/files/pdf"
@@ -37,7 +37,7 @@ func CreateVectorsPDF(pdfFile []byte, pgDatabasename string, metadata []MetaData
 	// 	return ollamaLLMEmbeddingErr
 	// }
 
-	ollamaLLMRequesting, ollamaLLMRequestingErr := ai.CreateOllamaConnection(
+	ollamaLLMRequesting, ollamaLLMRequestingErr := ollamaProvider.CreateOllamaConnection(
 		ollama.WithModel(configuration.OllamaAPI.RequestingModelname),
 	)
 	if ollamaLLMRequestingErr != nil {
@@ -134,7 +134,7 @@ func BuildDocumentsFromPDF(requestingOllamaLLM *ollama.LLM, pdfFile []byte) ([]s
 
 // StoreEmbeddings connects to Ollama + pgvector and persists the provided documents as embeddings.
 func StoreEmbeddings(docs []schema.Document, pgDatabasename string) ([]string, error) {
-	ollamaLLM, ollamaLLMErr := ai.CreateOllamaConnection(
+	ollamaLLM, ollamaLLMErr := ollamaProvider.CreateOllamaConnection(
 		ollama.WithModel(configuration.OllamaAPI.EmbeddingModelname),
 	)
 	if ollamaLLMErr != nil {

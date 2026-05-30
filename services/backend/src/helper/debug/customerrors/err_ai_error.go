@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	errorconst "github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors/custom-error-const"
+	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/logger"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/debug/runtime"
 	"github.com/google/uuid"
 )
 
 type AIError struct {
-	ID uuid.UUID
+	ID *uuid.UUID
 
 	file       string
 	lineNumber int
@@ -29,7 +30,7 @@ func NewAIError(err error, prompt string) *AIError {
 	errUuid := uuid.New()
 
 	model := &AIError{
-		ID: errUuid,
+		ID: &errUuid,
 
 		file:       file,
 		lineNumber: lineNumber,
@@ -41,6 +42,15 @@ func NewAIError(err error, prompt string) *AIError {
 		prompt: prompt,
 		error:  err,
 	}
+
+	logger.ErrorWithCustomLocation(
+		model.ID,
+		model.httpUserMessage,
+		model.file,
+		model.lineNumber,
+		model.error,
+		prompt,
+	)
 
 	return model
 }
