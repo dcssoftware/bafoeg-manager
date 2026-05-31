@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type FlexTime struct {
+type PostgresJsonTime struct {
 	time.Time
 }
 
@@ -18,14 +18,13 @@ var timeFormats = []string{
 	"2006-01-02T15:04:05+00",           // postgres without colon (no tz offset)
 }
 
-func (ft *FlexTime) UnmarshalJSON(data []byte) error {
+func (ft *PostgresJsonTime) UnmarshalJSON(data []byte) error {
 	s := strings.Trim(string(data), `"`)
 	if s == "null" {
 		ft.Time = time.Time{}
 		return nil
 	}
 
-	// Normalize "+00" → "+00:00" so standard parsers accept it
 	s = normalizeTimezone(s)
 
 	for _, layout := range timeFormats {
