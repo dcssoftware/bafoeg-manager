@@ -74,7 +74,7 @@ jobs:
         run: go install github.com/swaggo/swag/cmd/swag@latest
 
       - name: Create swagger definition
-        run: swag init -g src/web-app/app.go -o swagger-docs
+        run: (cd services/backend ; swag init -g src/web-app/app.go -o swagger-docs)
       
       # ---------------------------------------------------------------------------------------------------------
       #
