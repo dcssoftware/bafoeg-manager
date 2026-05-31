@@ -38,7 +38,7 @@
     "bits-ui": "2.16.5",
     "chart.js": "4.5.1",
     "cookies": "0.9.1",
-    "dompurify": "3.3.3",
+    "dompurify": "3.4.0",
     "filepond": "4.32.12",
     "filesize": "11.0.15",
     "intl-messageformat": "11.2.0",
