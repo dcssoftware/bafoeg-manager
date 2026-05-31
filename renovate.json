@@ -37,8 +37,5 @@
             ],
             "abandonmentThreshold": "1 year"
         }
-    ],
-    "repositories": [
-        "dcssoftware/bafoeg-manager"
     ]
 }
