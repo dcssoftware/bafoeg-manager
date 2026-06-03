@@ -120,7 +120,7 @@ jobs:
         run: mkdir -p /tmp/gosec
 
       - name: run security checks
-        uses: securego/gosec@v2.25.0
+        uses: securego/gosec@v2.26.1
         env:
           GITHUB_AUTHENTICATION_TOKEN: ${{ secrets.RENOVATE_BOT_GITHUB_TOKEN }}
         with:
