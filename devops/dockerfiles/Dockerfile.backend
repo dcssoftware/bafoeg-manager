@@ -1,4 +1,4 @@
-FROM golang:1.26.3 AS basebuilder
+FROM golang:1.26.4 AS basebuilder
 WORKDIR /app/backend
 
 ENV GOMODCACHE=/gomod-cache
