@@ -58,7 +58,7 @@ jobs:
       - name: Install Golang
         uses: actions/setup-go@v6
         with:
-          go-version: 1.26.3
+          go-version: 1.26.4
           cache-dependency-path: services/backend/go.sum
 
       - name: Setup Docker Builder
