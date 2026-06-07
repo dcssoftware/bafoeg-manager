@@ -41,7 +41,7 @@
     "dompurify": "3.4.8",
     "filepond": "4.32.12",
     "filesize": "11.0.17",
-    "intl-messageformat": "11.2.7",
+    "intl-messageformat": "11.2.8",
     "js-cookie": "3.0.8",
     "jsdom": "29.1.1",
     "ky": "2.0.2",
