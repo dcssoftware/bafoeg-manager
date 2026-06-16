@@ -3,7 +3,7 @@ module github.com/dcssoftware/bafoeg-manager
 go 1.25.7
 
 require (
-	charm.land/lipgloss/v2 v2.0.3
+	charm.land/lipgloss/v2 v2.0.4
 	github.com/ccoveille/go-safecast/v2 v2.0.1
 	github.com/dcssoftware/clamav-rest-go-sdk v0.0.1
 	github.com/go-playground/locales v0.14.1
@@ -24,6 +24,7 @@ require (
 	github.com/qeesung/image2ascii v1.0.1
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
+	github.com/swaggo/swag v1.16.6
 	golang.org/x/image v0.41.0
 	golang.org/x/mod v0.36.0
 	golang.org/x/oauth2 v0.36.0
@@ -92,7 +93,6 @@ require (
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
-	github.com/swaggo/swag v1.16.6 // indirect
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/yargevad/filepathx v1.0.0 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
