@@ -34,6 +34,8 @@
     "@fontsource/inter": "5.2.8",
     "@fontsource/roboto": "5.2.10",
     "@internationalized/date": "3.12.2",
+    "@svar-ui/calendar-locales": "^2.6.0",
+    "@svar-ui/svelte-calendar": "^2.6.0",
     "@types/js-cookie": "3.0.6",
     "bits-ui": "2.18.1",
     "chart.js": "4.5.1",

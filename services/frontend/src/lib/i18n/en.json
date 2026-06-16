@@ -39,6 +39,9 @@
             "educational-institutions": {
                 "header": "Educational institutions"
             },
+            "calendar": {
+                "header": "Calendar"
+            },
             "cash-flows": {
                 "header": "Cash Flows"
             },
