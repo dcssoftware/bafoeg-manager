@@ -78,7 +78,7 @@ CREATE VIEW eakte_files_overview AS (
     'name', files.file_name,
     'file_type', files.file_type,
     'file_size', files.file_size,
-    'created', to_char(files.created AT TIME ZONE 'Europe/Berlin'::text, 'YYYY-MM-DD"T"HH24:MI:SS.USOF')
+    'created', files.created::timestamp with time zone
   ) AS files,
   json_build_object(
     'id', eakte_import_vorgang.id,

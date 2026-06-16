@@ -1,4 +1,4 @@
-FROM node:24.14.1 as frontendbuilder
+FROM node:24.16.0 as frontendbuilder
 WORKDIR /app
 
 # copy package manager stuff
@@ -16,7 +16,7 @@ COPY services/frontend .
 RUN npm run build
 
 # ---------------------------------------------------
-FROM node:24.14.1-alpine
+FROM node:24.16.0-alpine
 WORKDIR /app
 
 COPY --from=frontendbuilder /app .

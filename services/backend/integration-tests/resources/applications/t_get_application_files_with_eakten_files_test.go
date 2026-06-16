@@ -34,4 +34,9 @@ func TestGetApplicationFilesWithEakteFiles(t *testing.T) {
 	files, fileErr := testSetup.AppServices.ApplicationsService.GetApplicationFilesByApplicationID(nil, 1, applicationID.String())
 	assert.NoError(t, fileErr)
 	assert.Len(t, files, 4)
+
+	eakteFiles, _, eakteFilesErr := testSetup.AppServices.EakteSvc.GetFilesByAkteID(nil, akteID.String())
+	assert.NoError(t, eakteFilesErr)
+	assert.Len(t, eakteFiles, 3)
+
 }

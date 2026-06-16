@@ -3,5 +3,4 @@ vendor/
 dist/
 src/assets/frontend/
 !src/assets/frontend/.gitkeep
-swagger-docs/
 __debug_*

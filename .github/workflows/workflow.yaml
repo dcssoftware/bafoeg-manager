@@ -58,17 +58,23 @@ jobs:
       - name: Install Golang
         uses: actions/setup-go@v6
         with:
-          go-version: 1.26.1
+          go-version: 1.26.4
           cache-dependency-path: services/backend/go.sum
 
-      - name: Setup Blacksmith Builder
-        uses: useblacksmith/setup-docker-builder@v1
+      - name: Setup Docker Builder
+        uses: docker/setup-buildx-action@v4
 
       - name: Install Dependencies Frontend
         run: (cd services/frontend ; npm install)
 
       - name: Install Dependencies Backend
         run: (cd services/backend ; go mod download)
+
+      - name: Install swagger
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Create swagger definition
+        run: (cd services/backend ; swag init -g src/web-app/app.go -o swagger-docs)
       
       # ---------------------------------------------------------------------------------------------------------
       #
@@ -114,7 +120,7 @@ jobs:
         run: mkdir -p /tmp/gosec
 
       - name: run security checks
-        uses: securego/gosec@v2.25.0
+        uses: securego/gosec@v2.27.1
         env:
           GITHUB_AUTHENTICATION_TOKEN: ${{ secrets.RENOVATE_BOT_GITHUB_TOKEN }}
         with:

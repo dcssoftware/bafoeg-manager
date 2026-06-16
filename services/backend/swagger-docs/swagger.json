@@ -1,0 +1,665 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "\n\u003cimg alt=\"coffee drinking gopher\" src=\"/api/asset/gopher-coffee\" height=\"200px\"\u003e\n",
+        "title": "DCS / BAföG-App",
+        "contact": {},
+        "version": "0.1"
+    },
+    "host": "web.nextreleaseplease.com",
+    "basePath": "/",
+    "paths": {
+        "/api/asset/gopher-coffee": {
+            "get": {
+                "description": "Retrieves a GIF image of a gopher enjoying coffee.",
+                "produces": [
+                    "image/gif"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get a nice gopher trinking coffee - image",
+                "responses": {
+                    "200": {
+                        "description": "A GIF image of a gopher drinking coffee.",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "code\":\t404,\t\"message\":\t\"Not found ❌",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/asset/licenses": {
+            "get": {
+                "description": "Retrieves the software licenses",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get the dependent software licenses - json",
+                "responses": {
+                    "200": {
+                        "description": "A GIF image of a gopher drinking coffee.",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "code\":\t404,\t\"message\":\t\"Not found ❌",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/asset/logo": {
+            "get": {
+                "description": "Retrieves the website logo",
+                "produces": [
+                    "image/png"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get the website logo",
+                "responses": {
+                    "200": {
+                        "description": "Website Logo.",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "code\":\t404,\t\"message\":\t\"Not found ❌",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/asset/logo-branding": {
+            "get": {
+                "description": "Retrieves the website logo",
+                "produces": [
+                    "image/png"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get the website logo",
+                "responses": {
+                    "200": {
+                        "description": "Website Logo.",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "code\":\t404,\t\"message\":\t\"Not found ❌",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ping": {
+            "get": {
+                "description": "get string by ID",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Ping the server if startup was successful",
+                "responses": {
+                    "200": {
+                        "description": "API is online",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "code\":\t404,\t\"message\":\t\"Not found ❌",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/system-healthcheck": {
+            "get": {
+                "description": "Checks all depdent systems, if they are still up and responding",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "System health-check",
+                "responses": {
+                    "200": {
+                        "description": "✅ System healthy",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "code\":\t404,\t\"message\":\t\"Not found ❌",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "❌ System unhealthy",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1//applications/{applicationID}/revision": {
+            "get": {
+                "description": "Retrieves V1 Application Revisions by Application ID for BAföG",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications / revision"
+                ],
+                "summary": "V1 Get Application Revisions by Application ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Application ID",
+                        "name": "applicationID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/applications/": {
+            "get": {
+                "description": "Retrieves V1 Application Requests for BAföG",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "V1 Get an Applications",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter applications by user ID",
+                        "name": "userID",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/applications/applicants": {
+            "get": {
+                "description": "Retrieves V1 Applicants (E-Akten-Users)for BAföG Applications",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications / applicants"
+                ],
+                "summary": "V1 Get Applicants (E-Akten-Users)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/applications/applicants/by-school/{schoolID}": {
+            "get": {
+                "description": "Retrieves an V1 Applicants (E-Akten-User) by School ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications / applicants"
+                ],
+                "summary": "V1 Get an Applicants (E-Akten-User) by School ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "School ID",
+                        "name": "schoolID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Show only active students (applicants)",
+                        "name": "isActive",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/applications/applicants/{id}": {
+            "get": {
+                "description": "Retrieves an V1 Applicant (E-Akten-User) for BAföG Applications",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications / applicants"
+                ],
+                "summary": "V1 Get an Applicant (E-Akten-User) by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Application ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/applications/by-applicant-id/{applicantID}": {
+            "get": {
+                "description": "Retrieves V1 Application Requests for BAföG",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "V1 Get an Applications",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Applicant ID",
+                        "name": "applicantID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/applications/metrics": {
+            "get": {
+                "description": "Retrieves V1 Application Metrics",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "V1 Get Applications Metrics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter applications by user ID",
+                        "name": "userID",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/applications/{applicationID}": {
+            "get": {
+                "description": "Retrieves V1 Application Request by ID for BAföG",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "V1 Get an Application by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Application ID",
+                        "name": "applicationID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "get": {
+                "description": "Reads the session out of the refresh token and recreates a new temporary access token out of it",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get new access token via refresh token",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/schools/": {
+            "get": {
+                "description": "Retrieves V1 Schools",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schools"
+                ],
+                "summary": "V1 Get schools",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/schools/{schoolID}": {
+            "get": {
+                "description": "Retrieves V1 School by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schools"
+                ],
+                "summary": "V1 Get school by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "School ID",
+                        "name": "schoolID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/self": {
+            "get": {
+                "description": "Returns all set permission for authorized users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get own user permissions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SelfInformationModel"
+                        }
+                    },
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/self/permissions": {
+            "get": {
+                "description": "Returns all set permission for authorized users",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get own user permissions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SelfPermissionsModel"
+                        }
+                    },
+                    "404": {
+                        "description": "The requested data could not be found.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while processing your request. Please try again later. ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.SelfInformationModel": {
+            "type": "object",
+            "properties": {
+                "displayName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "profilePicture": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SelfPermissionsModel": {
+            "type": "object",
+            "properties": {
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "swagger.NotFoundErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

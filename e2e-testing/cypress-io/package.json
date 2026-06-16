@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "cypress": "15.13.0"
+    "cypress": "15.17.0"
   },
   "scripts": {
     "cy:open": "cypress open"

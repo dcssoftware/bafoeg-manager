@@ -11,11 +11,9 @@
   } from "$lib/api/eakten/types";
   import { DocumentIndicator } from "$lib/components/Document-Indicator";
   import {
-    IconHome,
     IconPen,
     IconSchool,
     IconStudent,
-    IconUserGraduate,
   } from "$lib/components/Icons";
   import { Pagination } from "$lib/components/Pagination";
   import { dateToFormatStringShort } from "$lib/functions/date";
@@ -193,7 +191,7 @@
 {#snippet showFileDialog()}
   <FileViewer
     showFileURL={showFileData?.showFileURL ?? ""}
-    fileTypeIndicator={"pdf"}
+    fileTypeIndicator={showFileData?.fileTypeIndicator}
     closeDialog={closeShowFileDialog}
   />
 {/snippet}
