@@ -12,6 +12,7 @@
   import type { Payment } from "$lib/api/payments/types";
   import ApplicantActions from "./components/applicant-actions.svelte";
   import { error } from "@sveltejs/kit";
+    import PaymentFlow from "./components/payment-flow.svelte";
 
   let applicantPromise: Promise<Applicant | undefined> | undefined =
     $state(undefined);
@@ -97,6 +98,9 @@
                 "page.application.applicant.tabs.tab-headers.payment-history"
               )}</Tabs.Trigger
             >
+            <Tabs.Trigger value="payment-diagram">
+              Payment Flow
+            </Tabs.Trigger>
             <Tabs.Trigger value="applicant-actions"
               >Benutzer Aktionen</Tabs.Trigger
             >
@@ -110,6 +114,9 @@
             {:then payments}
               <PreviousPayment paymentData={payments} />
             {/await}
+          </Tabs.Content>
+          <Tabs.Content value="payment-diagram">
+              <PaymentFlow />
           </Tabs.Content>
           <Tabs.Content value="applicant-actions">
             <ApplicantActions />

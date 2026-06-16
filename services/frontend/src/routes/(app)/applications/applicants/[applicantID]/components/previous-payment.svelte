@@ -14,6 +14,7 @@
   import { dateToFormatStringLong } from "$lib/functions/date";
   import { Dialog } from "$lib/components/Dialog";
   import { Button } from "$lib/components/Button";
+    import PaymentFlow from "./payment-flow.svelte";
 
   interface Props {
     paymentData: Payment[] | undefined;
