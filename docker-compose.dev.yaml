@@ -73,7 +73,7 @@ services:
     command: ["sh", "-c", "cd /app && npm install && npm run dev"]
 
   frontend-tests:
-    image: node:24.16.0
+    image: node:24.17.0
     container_name: web-ui-test
     restart: unless-stopped
     volumes:
