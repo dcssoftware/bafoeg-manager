@@ -43,6 +43,5 @@ This project contains [EICAR test files](https://www.eicar.org/download-anti-mal
 
 **Set Secrets to run GitHub Actions:**
 
-- CLAUDE_API_KEY
 - GH_BOT_EMAIL
 - RENOVATE_BOT_GITHUB_TOKEN
