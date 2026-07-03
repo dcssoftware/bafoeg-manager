@@ -3,7 +3,7 @@ module github.com/dcssoftware/bafoeg-manager
 go 1.25.7
 
 require (
-	charm.land/lipgloss/v2 v2.0.4
+	charm.land/lipgloss/v2 v2.0.5
 	github.com/ccoveille/go-safecast/v2 v2.0.1
 	github.com/dcssoftware/clamav-rest-go-sdk v0.0.1
 	github.com/go-playground/locales v0.14.1
@@ -162,7 +162,7 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/tools v0.45.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260114163908-3f89685c29c3 // indirect
