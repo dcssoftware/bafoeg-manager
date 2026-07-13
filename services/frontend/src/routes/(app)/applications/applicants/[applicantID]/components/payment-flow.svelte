@@ -13,11 +13,11 @@
                     category: 'Studierendenwerk'
                 },
                 {
-                    name: 'TUM München',
+                    name: 'TUM München 1. Semester',
                     category: 'Ausbildungsstätte'
                 },
                 {
-                    name: 'Beispiel Gymnasium',
+                    name: 'Beispiel Gymnasium, Klasse 12',
                     category: 'Ausbildungsstätte'
                 },
             ]
@@ -31,7 +31,7 @@
                 "Beispiel Gymnasium": "var(--color-green)",
             },
             gradient: {
-                enabled: true
+                enabled: false
             }
         }
     }
@@ -43,12 +43,12 @@
         },
         {
             source: "München",
-            target: "TUM München",
+            target: "TUM München 1. Semester",
             value: 300
         },
         {
             source: "München",
-            target: "Beispiel Gymnasium",
+            target: "Beispiel Gymnasium, Klasse 12",
             value: 700
         }
     ]
