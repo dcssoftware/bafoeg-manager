@@ -45,7 +45,7 @@
     "js-cookie": "3.0.8",
     "jsdom": "29.1.1",
     "ky": "2.0.2",
-    "marked": "18.0.5",
+    "marked": "18.0.7",
     "radix-icons-svelte": "1.2.1",
     "svelte-filepond": "0.2.2",
     "svelte-i18n": "4.0.1",
