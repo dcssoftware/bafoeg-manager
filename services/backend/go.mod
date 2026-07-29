@@ -19,7 +19,7 @@ require (
 	github.com/kolesa-team/go-webp v1.0.5
 	github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728
 	github.com/lib/pq v1.12.3
-	github.com/lmittmann/tint v1.1.3
+	github.com/lmittmann/tint v1.2.0
 	github.com/pdfcpu/pdfcpu v0.13.0
 	github.com/qeesung/image2ascii v1.0.1
 	github.com/spf13/cobra v1.10.2
