@@ -16,7 +16,7 @@ COPY services/frontend .
 RUN npm run build
 
 # ---------------------------------------------------
-FROM node:24.18.1-alpine
+FROM node:24.19.0-alpine
 WORKDIR /app
 
 COPY --from=frontendbuilder /app .
