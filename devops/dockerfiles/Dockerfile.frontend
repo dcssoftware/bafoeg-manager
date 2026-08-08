@@ -1,4 +1,4 @@
-FROM node:24.18.1 as frontendbuilder
+FROM node:24.19.0 as frontendbuilder
 WORKDIR /app
 
 # copy package manager stuff
