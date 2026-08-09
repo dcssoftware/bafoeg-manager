@@ -19,7 +19,7 @@
     "@sveltejs/vite-plugin-svelte": "7.2.0",
     "@types/node": "25.9.5",
     "@types/throttle-debounce": "5.0.2",
-    "knip": "6.31.0",
+    "knip": "6.32.0",
     "mdsvex": "0.12.8",
     "sass": "1.102.0",
     "svelte": "5.56.8",
