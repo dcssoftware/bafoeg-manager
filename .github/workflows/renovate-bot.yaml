@@ -23,7 +23,7 @@ jobs:
       # allow the action to create branches and PRs
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Blacksmith Builder
         uses: useblacksmith/setup-docker-builder@v1
