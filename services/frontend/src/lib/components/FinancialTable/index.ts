@@ -1,1 +1,0 @@
-export { default as FinancialTable } from './component.svelte';

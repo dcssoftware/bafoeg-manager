@@ -1,1 +1,0 @@
-export { default as UserPicker } from './component.svelte';

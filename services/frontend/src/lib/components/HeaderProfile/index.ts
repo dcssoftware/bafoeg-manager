@@ -1,1 +1,0 @@
-export { default as HeaderProfile } from "./headerprofile.svelte"

@@ -1,1 +1,0 @@
-export { default as SchoolSelect } from "./component.svelte"

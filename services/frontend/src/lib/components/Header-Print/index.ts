@@ -1,1 +1,0 @@
-export { default as HeaderPrint } from "./header.svelte"

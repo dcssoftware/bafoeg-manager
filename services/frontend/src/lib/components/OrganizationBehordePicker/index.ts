@@ -1,1 +1,0 @@
-export { default as OrganizationBehördePicker } from './component.svelte';

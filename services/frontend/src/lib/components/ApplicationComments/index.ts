@@ -1,1 +1,0 @@
-export { default as ApplicationComments } from './component.svelte';

@@ -1,4 +1,0 @@
-grafana-data/*
-!grafana-data/.gitkeep
-loki-data/*
-!loki-data/.gitkeep

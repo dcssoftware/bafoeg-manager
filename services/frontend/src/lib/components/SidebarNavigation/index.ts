@@ -1,1 +1,0 @@
-export { default as SidebarNavigation } from "./navigation.svelte"
