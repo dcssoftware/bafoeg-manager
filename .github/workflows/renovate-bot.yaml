@@ -23,10 +23,10 @@ jobs:
       # allow the action to create branches and PRs
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.1.0
 
       - name: Setup Blacksmith Builder
-        uses: useblacksmith/setup-docker-builder@v1
+        uses: useblacksmith/setup-docker-builder@v1.12.0
 
       - name: Self-hosted Renovate
         uses: renovatebot/github-action@v46.2.2
