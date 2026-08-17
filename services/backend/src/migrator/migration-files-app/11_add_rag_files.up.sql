@@ -62,7 +62,7 @@ CREATE TABLE rag_conversations(
 CREATE TABLE rag_conversation_messages(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   conversation_id UUID NOT NULL REFERENCES rag_conversations(id),
-  message TEXT NOT NULL CHECK (message <> ''),
+  message TEXT,
   sender rag_message_sender_enum NOT NULL,
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now()
 );

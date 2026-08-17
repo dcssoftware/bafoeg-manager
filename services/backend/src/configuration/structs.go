@@ -95,12 +95,13 @@ type OauthConfigurationModel struct {
 }
 
 type OllamaAPIModel struct {
-	Address             string
-	Port                uint
-	ApiKey              string
-	IsSecure            bool
-	EmbeddingModelname  string
-	RequestingModelname string
+	Address               string
+	Port                  uint
+	ApiKey                string
+	IsSecure              bool
+	EmbeddingModelname    string
+	RequestingModelname   string
+	RequestTimeoutSeconds uint
 
 	DatabaseTablenameRAGSchueler     string
 	DatabaseTablenameRAGStudierenden string

@@ -3,9 +3,12 @@ package http
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/dcssoftware/bafoeg-manager/src/configuration"
 	customerrorconst "github.com/dcssoftware/bafoeg-manager/src/helper/debug/customerrors/custom-error-const"
 	sessionLocals "github.com/dcssoftware/bafoeg-manager/src/web-app/middlewares/http/consts/session-locals"
 	"github.com/gofiber/fiber/v3"
@@ -13,6 +16,7 @@ import (
 )
 
 func (h *RAGHandler) GetRAGrequestSchüler(c fiber.Ctx) error {
+
 	userIDString := c.Locals(sessionLocals.UserUUID).(string)
 	userID, userIDErr := uuid.Parse(userIDString)
 	if userIDErr != nil {
@@ -35,14 +39,21 @@ func (h *RAGHandler) GetRAGrequestSchüler(c fiber.Ctx) error {
 	c.Set("Connection", "keep-alive")
 	c.Set("Transfer-Encoding", "chunked")
 
-	c.RequestCtx().SetBodyStreamWriter(func(w *bufio.Writer) {
+	requestCtx := c.RequestCtx()
+	ctx, cancel := context.WithTimeout(requestCtx, time.Second*time.Duration(configuration.OllamaAPI.RequestTimeoutSeconds))
+
+	requestCtx.SetBodyStreamWriter(func(w *bufio.Writer) {
+		defer cancel()
 
 		_, _, responseErr := h.service.GetRAGrequestSchüler(
+			ctx,
 			nil,
 			conversationID,
 			userID,
 			prompt,
 			func(ctx context.Context, chunk []byte) error {
+
+				fmt.Print(string(chunk))
 
 				// Write each chunk to the response stream
 				if _, writeErr := w.Write(chunk); writeErr != nil {
@@ -59,6 +70,7 @@ func (h *RAGHandler) GetRAGrequestSchüler(c fiber.Ctx) error {
 		}
 
 	})
+
 	return nil
 }
 

@@ -69,9 +69,10 @@ var (
 		Port:                GetEnvOrDefaultUint("OLLAMA_PORT", 11434),
 		ApiKey:              GetEnvOrDefaultString("OLLAMA_API_KEY", "HOMERSIMPSON"),
 		IsSecure:            GetEnvOrDefaultBool("OLLAMA_IS_SECURE", false),
-		EmbeddingModelname:  GetEnvOrDefaultString("OLLAMA_EMBEDDING_MODELNAME", "embeddinggemma:latest"),  // all-minilm
-		RequestingModelname: GetEnvOrDefaultString("OLLAMA_REQUESTING_MODELNAME", "ministral-3:14b-cloud"), // ministral-3:14b-cloud
+		EmbeddingModelname:  GetEnvOrDefaultString("OLLAMA_EMBEDDING_MODELNAME", "embeddinggemma:latest"),       // all-minilm
+		RequestingModelname: GetEnvOrDefaultString("OLLAMA_REQUESTING_MODELNAME", "mistral-large-3:675b-cloud"), // ministral-3:14b-cloud
 		// RequestingModelname: GetEnvOrDefaultString("OLLAMA_REQUESTING_MODELNAME", "gpt-oss:120b-cloud"),
+		RequestTimeoutSeconds: GetEnvOrDefaultUint("OLLAMA_REQUEST_TIMEOUT", 28),
 
 		DatabaseTablenameRAGSchueler:     GetEnvOrDefaultString("OLLAMA_VECTOR_RAG_TABLENAME_SCHUELER", "rag_schueler"),
 		DatabaseTablenameRAGStudierenden: GetEnvOrDefaultString("OLLAMA_VECTOR_RAG_TABLENAME_STUDIERENDEN", "rag_studierenden"),

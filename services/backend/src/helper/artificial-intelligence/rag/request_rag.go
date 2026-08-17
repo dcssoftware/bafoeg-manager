@@ -15,7 +15,7 @@ import (
 	"github.com/tmc/langchaingo/vectorstores/pgvector"
 )
 
-func RequestRAG(prompt string, pgDatabasename string, messages []models.ConversationMessage, streamfunc func(ctx context.Context, chunk []byte) error) (response string, err error) {
+func RequestRAG(ctx context.Context, prompt string, pgDatabasename string, messages []models.ConversationMessage, streamfunc func(ctx context.Context, chunk []byte) error) (response string, err error) {
 
 	ollamaLLMEmbedding, ollamaLLMEmbeddingErr := ai.CreateOllamaConnection(
 		ollama.WithModel(configuration.OllamaAPI.EmbeddingModelname),
@@ -109,7 +109,7 @@ func RequestRAG(prompt string, pgDatabasename string, messages []models.Conversa
 	conversationChain := chains.NewConversation(ollamaLLMRequesting, chatMemory)
 
 	response, responseErr := chains.Run(
-		context.Background(),
+		ctx,
 		conversationChain,
 		ragPrompt,
 		chains.WithTemperature(0),

@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *RAGService) GetRAGrequestSchüler(tx *sqlx.Tx, conversationID uuid.UUID, userID uuid.UUID, prompt string, streamFunc func(ctx context.Context, chunk []byte) error) (response string, currentConversationID uuid.UUID, err customerrors.ErrorInterface) {
+func (s *RAGService) GetRAGrequestSchüler(ctx context.Context, tx *sqlx.Tx, conversationID uuid.UUID, userID uuid.UUID, prompt string, streamFunc func(ctx context.Context, chunk []byte) error) (response string, currentConversationID uuid.UUID, err customerrors.ErrorInterface) {
 
 	conversation, conversationErr := s.GetRagConversationByID(tx, conversationID)
 	if conversationErr != nil {
@@ -38,11 +38,13 @@ func (s *RAGService) GetRAGrequestSchüler(tx *sqlx.Tx, conversationID uuid.UUID
 	}
 
 	response, responseErr := rag.RequestRAG(
+		ctx,
 		prompt,
 		configuration.OllamaAPI.DatabaseTablenameRAGSchueler,
 		ragMessages,
 		streamFunc,
 	)
+
 	if responseErr != nil {
 		return "", uuid.Nil, customerrors.NewAIError(responseErr, prompt)
 	}

@@ -131,6 +131,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.23.1 // indirect
 	github.com/go-openapi/jsonreference v0.21.5 // indirect
 	github.com/go-openapi/spec v0.22.4 // indirect
+	github.com/goforj/godump v1.9.1
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/h2non/filetype v1.1.3
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
