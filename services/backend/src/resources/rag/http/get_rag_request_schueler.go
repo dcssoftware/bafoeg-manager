@@ -3,7 +3,6 @@ package http
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -52,8 +51,6 @@ func (h *RAGHandler) GetRAGrequestSchüler(c fiber.Ctx) error {
 			userID,
 			prompt,
 			func(ctx context.Context, chunk []byte) error {
-
-				fmt.Print(string(chunk))
 
 				// Write each chunk to the response stream
 				if _, writeErr := w.Write(chunk); writeErr != nil {

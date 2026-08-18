@@ -28,6 +28,7 @@
   let dialogUseRagIsOpen: boolean = $state(false);
   let filterSearchTerm: string = $state("");
   let dialogShowFileIsOpen: boolean = $state(false);
+  let ragConversationID: string | undefined = $state(undefined);
 
   let showFileURL: string = $state("");
   let fileTypeIndicator: string | undefined = $state(undefined);
@@ -87,7 +88,7 @@
 {/snippet}
 
 {#snippet useRagDialog()}
-  <LLMChat />
+  <LLMChat ragDataSource={"studierenden"} bind:ragConversationID />
 {/snippet}
 
 {#snippet showFileDialog()}

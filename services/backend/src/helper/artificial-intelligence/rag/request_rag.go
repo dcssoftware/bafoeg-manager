@@ -8,6 +8,7 @@ import (
 	"github.com/dcssoftware/bafoeg-manager/src/configuration"
 	ai "github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence"
 	"github.com/dcssoftware/bafoeg-manager/src/helper/artificial-intelligence/rag/models"
+	"github.com/goforj/godump"
 	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/embeddings"
 	"github.com/tmc/langchaingo/llms/ollama"
@@ -37,6 +38,8 @@ func RequestRAG(ctx context.Context, prompt string, pgDatabasename string, messa
 	}
 
 	var dbMetaDataFilter map[string]any
+
+	godump.Dump(pgDatabasename, dbMetaDataFilter)
 
 	pgvectorStore, pgvectorStoreErr := CreatePGVectorConnection(
 		pgvector.WithEmbeddingTableName(pgDatabasename),
@@ -86,7 +89,7 @@ func RequestRAG(ctx context.Context, prompt string, pgDatabasename string, messa
 
 	ragPrompt := ctxBuilder.String()
 
-	// godump.Dump(ragPrompt)
+	godump.Dump(ragPrompt)
 
 	chatMemory := memory.NewConversationBuffer()
 

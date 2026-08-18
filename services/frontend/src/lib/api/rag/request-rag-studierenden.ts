@@ -1,4 +1,4 @@
-export async function requestRagSchueler(
+export async function requestRagStudierenden(
   conversationID: string | undefined,
   userInput: string,
   abortSignal?: AbortSignal,
@@ -11,11 +11,11 @@ export async function requestRagSchueler(
       queryParams.append('conversationID', conversationID);
     }
 
-    const response = await fetch(`/api/v1/rag/bafoeg/schueler/request?${queryParams.toString()}`, {
+    const response = await fetch(`/api/v1/rag/bafoeg/studierenden/request?${queryParams.toString()}`, {
       signal: abortSignal,
     });
     if (!response.ok) {
-      throw new Error('Failed to request RAG Schüler data');
+      throw new Error('Failed to request RAG Studierenden data');
     }
 
     const reader = response.body?.getReader()
@@ -26,7 +26,7 @@ export async function requestRagSchueler(
       return undefined;
     }
 
-    console.error('Failed to request RAG Schüler data', error);
+    console.error('Failed to request RAG Studierenden data', error);
     return undefined
   }
 }

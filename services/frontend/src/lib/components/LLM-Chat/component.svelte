@@ -1,5 +1,6 @@
 <script lang="ts">
   import { requestRagSchueler } from "$lib/api/rag/request-rag-schueler";
+  import { requestRagStudierenden } from "$lib/api/rag/request-rag-studierenden";
   import { startConversationSchueler } from "$lib/api/rag/start-conversation-schueler";
   import type { Message } from ".";
   import { Button } from "../Button";
@@ -8,16 +9,28 @@
   let ragInputValue: string = $state("");
 
   interface Props {
-    ragConversationID: string | undefined;
+    ragConversationID?: string | undefined;
+    ragDataSource: "schueler" | "studierenden";
   }
 
-  let { ragConversationID = $bindable() }: Props = $props();
+  let { ragConversationID = $bindable(), ragDataSource }: Props = $props();
 
   let llmMessages: Message[] = $state([]);
+  let isGeneratingResponse: boolean = $state(false);
+  let abortController: AbortController | undefined = $state(undefined);
 
   async function newLLMSession() {
+    abortController?.abort();
+    abortController = undefined;
+    isGeneratingResponse = false;
     ragConversationID = undefined;
     llmMessages = [];
+  }
+
+  function stopLLMResponse() {
+    abortController?.abort();
+    abortController = undefined;
+    isGeneratingResponse = false;
   }
 
   async function sendLLMChatMessage() {
@@ -35,33 +48,69 @@
       ragConversationID = conversation?.ID;
     }
 
-    await requestRagSchueler(ragConversationID, messageContent).then(
-      async (reader) => {
-        if (reader !== undefined) {
-          const index = llmMessages.push({
-            message: "",
-            html: "",
-            direction: "output",
-          });
+    abortController?.abort();
+    abortController = new AbortController();
+    isGeneratingResponse = true;
 
-          const decoder = new TextDecoder();
-          let done = false;
+    try {
+      if (ragDataSource === "schueler") {
+        await requestRagSchueler(
+          ragConversationID,
+          messageContent,
+          abortController.signal,
+        ).then(handleRagResponseStreamasync);
+      } else if (ragDataSource === "studierenden") {
+        await requestRagStudierenden(
+          ragConversationID,
+          messageContent,
+          abortController.signal,
+        ).then(handleRagResponseStreamasync);
+      }
+    } finally {
+      isGeneratingResponse = false;
+      abortController = undefined;
+    }
+  }
 
-          while (!done) {
-            const { value, done: doneReading } = await reader.read();
+  async function handleRagResponseStreamasync(
+    reader:
+      | {
+          read: () =>
+            | PromiseLike<{ value: any; done: any }>
+            | { value: any; done: any };
+        }
+      | undefined,
+  ) {
+    if (reader !== undefined) {
+      const index = llmMessages.push({
+        message: "",
+        html: "",
+        direction: "output",
+      });
 
-            done = doneReading;
-            if (value) {
-              llmMessages[index - 1].message += decoder.decode(value);
-              llmMessages[index - 1].html = await parseMarkdownToHTML(
-                llmMessages[index - 1].message
-              );
-            }
-          }
+      const decoder = new TextDecoder();
+      let done = false;
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+
+        done = doneReading;
+        if (value) {
+          llmMessages[index - 1].message += decoder.decode(value);
+          llmMessages[index - 1].html = await parseMarkdownToHTML(
+            llmMessages[index - 1].message,
+          );
         }
       }
-    );
+    }
   }
+
+  $effect(() => {
+    return () => {
+      abortController?.abort();
+      abortController = undefined;
+    };
+  });
 
   async function parseMarkdownToHTML(input: string): Promise<string> {
     return (await compile(input, {}))?.code ?? "";
@@ -98,6 +147,12 @@
         </li>
       {/each}
     </ul>
+  {/if}
+  {#if isGeneratingResponse}
+    <div class="processing-indicator">
+      <span>Server is processing...</span>
+      <Button onclick={() => stopLLMResponse()}>Abbruch</Button>
+    </div>
   {/if}
   <div class="inputs">
     <textarea bind:value={ragInputValue} placeholder="Schreibe deinen Prompt"
@@ -171,6 +226,13 @@
           display: inline-block
           padding: 1rem
           border-radius: 5px
+
+    .processing-indicator
+      margin-top: auto
+      display: flex
+      align-items: center
+      gap: 1rem
+      padding: 0.5rem 0
 
     .inputs
       margin-top: auto

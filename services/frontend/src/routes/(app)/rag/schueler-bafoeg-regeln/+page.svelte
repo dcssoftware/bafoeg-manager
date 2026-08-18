@@ -88,7 +88,7 @@
 {/snippet}
 
 {#snippet useRagDialog()}
-  <LLMChat bind:ragConversationID />
+  <LLMChat ragDataSource={"schueler"} bind:ragConversationID />
 {/snippet}
 
 {#snippet showFileDialog()}
